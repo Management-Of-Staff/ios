@@ -15,7 +15,7 @@ let project = Project.makeAppModule(
     dependencies: [
         .Projcet.Network,
         .Projcet.DesignSystem,
-        .external(name: "RxSwift"),
+        .external(name: "CombineMoya"),
         .external(name: "Kingfisher"),
         .external(name: "FirebaseAnalytics")
     ],
