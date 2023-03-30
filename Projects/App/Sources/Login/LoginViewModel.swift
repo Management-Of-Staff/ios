@@ -8,13 +8,13 @@
 
 import Combine
 
-protocol ViewModelType {
+protocol LoginViewModelType {
     associatedtype Input
     associatedtype Output
     func transform(input: Input) -> Output
 }
 
-final class LoginViewModel: ViewModelType {
+final class LoginViewModel: LoginViewModelType {
     
     // MARK: - Properties
     private var cancelBag = Set<AnyCancellable>()
