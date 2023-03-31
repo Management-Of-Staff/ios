@@ -26,7 +26,7 @@ final class LoginViewController: UIViewController {
     
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(.img_logo)
+        imageView.image = UIImage(.imgLogo)
         imageView.contentMode = .scaleAspectFit
         imageView.backgroundColor = .lightGray
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -90,6 +90,7 @@ final class LoginViewController: UIViewController {
         button.layer.cornerRadius = 6
         button.layer.masksToBounds = true
         // 폰트는 수정해야함
+        button.titleLabel?.font = .doingFont(size: .button, weight: .bold)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button

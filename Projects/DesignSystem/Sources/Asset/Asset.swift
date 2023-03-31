@@ -9,5 +9,5 @@
 import Foundation
 
 public enum Asset: String {
-    case img_logo
+    case imgLogo
 }

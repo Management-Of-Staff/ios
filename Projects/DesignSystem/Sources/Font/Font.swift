@@ -6,7 +6,7 @@
 //  Copyright © 2023 Ozik. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 public enum Font {
     // MARK: 영문 JOST가 존재하긴 하는데 지금 화면상에서 영어를 어디서 썼는지 모르겠어서 일단 한국어 기준으로 만들었습니다.
