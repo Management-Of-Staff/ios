@@ -26,7 +26,7 @@ final class LoginViewController: UIViewController {
     
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "logo")
+        imageView.image = UIImage(.img_logo)
         imageView.contentMode = .scaleAspectFit
         imageView.backgroundColor = .lightGray
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -61,7 +61,7 @@ final class LoginViewController: UIViewController {
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 0))
         field.leftViewMode = .always
         field.clearButtonMode = .whileEditing
-        field.backgroundColor = UIColor(named: "neutral2")
+        field.backgroundColor = .neutral2
         field.translatesAutoresizingMaskIntoConstraints = false
         return field
     }()
@@ -77,7 +77,7 @@ final class LoginViewController: UIViewController {
         field.leftViewMode = .always
         field.clearButtonMode = .whileEditing
         field.isSecureTextEntry = true
-        field.backgroundColor = UIColor(named: DesignSystemAsset.Colors.green1.name, in: .module, compatibleWith: nil)
+        field.backgroundColor = .neutral2
         field.translatesAutoresizingMaskIntoConstraints = false
         return field
     }()
@@ -85,8 +85,8 @@ final class LoginViewController: UIViewController {
     private let loginButton: UIButton = {
         let button = UIButton()
         button.setTitle("로그인", for: .normal)
-        button.backgroundColor = .red
-        button.setTitleColor(.red, for: .normal)
+        button.backgroundColor = .mainOwner
+        button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 6
         button.layer.masksToBounds = true
         // 폰트는 수정해야함

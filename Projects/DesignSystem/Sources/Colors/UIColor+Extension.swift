@@ -19,4 +19,7 @@ public extension UIColor {
     // MARK: Background
     static let backgroundNeutral = doingColor(.backgroundNeutral)
     static let mainOwner = doingColor(.mainOwner)
+    static let neutral1 = doingColor(.neutral1)
+    static let neutral2 = doingColor(.neutral2)
+    static let neutral3 = doingColor(.neutral3)
 }
