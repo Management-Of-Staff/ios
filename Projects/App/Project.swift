@@ -23,5 +23,3 @@ let project = Project.makeAppModule(
     infoPlist: .file(path: "Sources/Application/Info.plist"),
     entitlements: .relativeToCurrentFile("App.entitlements")
 )
-
-

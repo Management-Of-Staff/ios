@@ -19,7 +19,7 @@ final class LoginViewController: UIViewController {
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.clipsToBounds = true
-        scrollView.backgroundColor = .systemBackground
+        scrollView.backgroundColor = .backgroundNeutral
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
@@ -129,6 +129,7 @@ final class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .backgroundNeutral
         configureUI()
         createLayout()
     }
@@ -136,7 +137,6 @@ final class LoginViewController: UIViewController {
     // MARK: - Function
     
 }
-
 
 // MARK: - UI Function
 

@@ -15,6 +15,3 @@ let project = Project.makeDesignSystemModule(
     dependencies: [],
     resources: ["Resources/**"]
 )
-
-
-

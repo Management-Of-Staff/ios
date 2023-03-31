@@ -20,4 +20,3 @@ public extension UIColor {
     static let backgroundNeutral = doingColor(.backgroundNeutral)
     static let mainOwner = doingColor(.mainOwner)
 }
-
