@@ -13,8 +13,8 @@ let project = Project.makeAppModule(
     platform: .iOS,
     product: .app,
     dependencies: [
-        .Projcet.Network,
-        .Projcet.DesignSystem,
+        .Project.Network,
+        .Project.DesignSystem,
         .external(name: "CombineMoya"),
         .external(name: "Kingfisher"),
         .external(name: "FirebaseAnalytics")

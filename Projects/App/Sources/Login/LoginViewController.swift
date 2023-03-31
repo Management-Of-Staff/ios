@@ -8,6 +8,7 @@
 
 import UIKit
 import Combine
+import DesignSystem
 
 final class LoginViewController: UIViewController {
     
@@ -38,7 +39,7 @@ final class LoginViewController: UIViewController {
         return control
     }()
     
-    private let LoginStackView: UIStackView = {
+    private let loginStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.spacing = 20
@@ -60,7 +61,7 @@ final class LoginViewController: UIViewController {
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 0))
         field.leftViewMode = .always
         field.clearButtonMode = .whileEditing
-        field.backgroundColor = .doingNeutralTwo
+        field.backgroundColor = UIColor(named: "neutral2")
         field.translatesAutoresizingMaskIntoConstraints = false
         return field
     }()
@@ -76,7 +77,7 @@ final class LoginViewController: UIViewController {
         field.leftViewMode = .always
         field.clearButtonMode = .whileEditing
         field.isSecureTextEntry = true
-        field.backgroundColor = .doingNeutralTwo
+        field.backgroundColor = UIColor(named: DesignSystemAsset.Colors.green1.name, in: .module, compatibleWith: nil)
         field.translatesAutoresizingMaskIntoConstraints = false
         return field
     }()
@@ -84,8 +85,8 @@ final class LoginViewController: UIViewController {
     private let loginButton: UIButton = {
         let button = UIButton()
         button.setTitle("로그인", for: .normal)
-        button.backgroundColor = .doingOwnerBlue
-        button.setTitleColor(.doingWhite, for: .normal)
+        button.backgroundColor = .red
+        button.setTitleColor(.red, for: .normal)
         button.layer.cornerRadius = 6
         button.layer.masksToBounds = true
         // 폰트는 수정해야함
@@ -118,7 +119,7 @@ final class LoginViewController: UIViewController {
     private let signInButton: UIButton = {
         let button = UIButton()
         button.setTitle("회원가입", for: .normal)
-        button.setTitleColor(.doingOwnerBlue, for: .normal)
+        button.setTitleColor(.red, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button

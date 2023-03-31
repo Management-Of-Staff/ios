@@ -1,8 +1,8 @@
 //
 //  Project.swift
-//  DoingManifests
+//  ProjectDescriptionHelpers
 //
-//  Created by Taehwan Kim on 2023/03/28.
+//  Created by Taehwan Kim on 2023/03/31.
 //
 
 import ProjectDescription
@@ -15,3 +15,6 @@ let project = Project.makeDesignSystemModule(
     dependencies: [],
     resources: ["Resources/**"]
 )
+
+
+
