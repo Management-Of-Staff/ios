@@ -18,12 +18,6 @@ public extension Project {
             configurations: [
                 .debug(name: .debug, xcconfig: .relativeToRoot("config.xcconfig")),
                 .release(name: .release, xcconfig: .relativeToRoot("config.xcconfig"))
-//                .debug(name: "Debug", settings: [
-//                                "VALID_ARCHS": ["arm64", "armv7", "armv7s", "arm64e", "x86_64", "i386"]
-//                            ]),
-//                            .release(name: "Release", settings: [
-//                                "VALID_ARCHS": ["arm64", "armv7", "armv7s", "arm64e", "x86_64", "i386"]
-//                            ]),
             ], defaultSettings: .recommended)
         
         let appTarget = Target(
@@ -65,7 +59,6 @@ public extension Project {
             schemes: schemes
         )
     }
-    
     static func makeDesignSystemModule(
         name: String,
         platform: Platform = .iOS,
@@ -78,6 +71,7 @@ public extension Project {
         resources: ResourceFileElements? = nil,
         infoPlist: InfoPlist = .default
     ) -> Project {
+        
         let settings: Settings = .settings(
             configurations: [
                 .debug(name: .debug),
@@ -120,7 +114,47 @@ public extension Project {
             targets: targets,
             schemes: schemes
         )
+        
     }
+    
+//        let appTarget = Target(
+//            name: name,
+//            platform: platform,
+//            product: product,
+//            bundleId: "\(organizationName).\(name)",
+//            deploymentTarget: deploymentTarget,
+//            infoPlist: infoPlist,
+////            sources: sources,
+//            sources: ["Sources/**"],
+//            resources: resources,
+//            scripts: [.SwiftLintString],
+//            dependencies: dependencies
+//        )
+//
+//        let testTarget = Target(
+//            name: "\(name)Tests",
+//            platform: platform,
+//            product: .unitTests,
+//            bundleId: "\(organizationName).\(name)Tests",
+//            deploymentTarget: deploymentTarget,
+//            infoPlist: .default,
+//            sources: ["Tests/**"],
+//            dependencies: [.target(name: name)]
+//        )
+//
+//        let schemes: [Scheme] = [.makeScheme(target: .debug, name: name)]
+//
+//        let targets: [Target] = [appTarget, testTarget]
+//
+//        return Project(
+//            name: name,
+//            organizationName: organizationName,
+//            packages: packages,
+//            settings: settings,
+//            targets: targets,
+//            schemes: schemes
+//        )
+//    }
     
     static func makeNetworkModule(
         name: String,
