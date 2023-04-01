@@ -26,11 +26,10 @@ final class LoginViewController: UIViewController {
     
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
-        // 디자인 시스템이 있긴한데 현재 작동 안 됨. 원인 파악해야함
+        // TODO: 디자인 시스템이 있긴한데 현재 작동 안 됨. 원인 파악해야함
         imageView.image = DesignSystemImages.Image(assetName: "img_logo")
 //        imageView.image = UIImage(.imgLogo)
         imageView.contentMode = .scaleAspectFit
-        imageView.backgroundColor = .lightGray
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
