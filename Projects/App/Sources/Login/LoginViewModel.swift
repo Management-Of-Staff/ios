@@ -18,7 +18,24 @@ final class LoginViewModel: LoginViewModelType {
     
     // MARK: - Properties
     private var cancelBag = Set<AnyCancellable>()
+    @Published var phoneNumberInput: String = ""
+    @Published var passwordInput: String = ""
     
+    lazy var isValid: AnyPublisher<Bool, Never> = Publishers
+        .CombineLatest($phoneNumberInput, $passwordInput)
+        .map({ (phoneNumber: String, password: String) in
+            if phoneNumber == "" || password == "" {
+                return false
+            }
+            if phoneNumber == password {
+                return true
+            } else {
+                return false
+            }
+        })
+        .print()
+        .eraseToAnyPublisher()
+
     struct Input {
         
     }

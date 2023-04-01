@@ -13,8 +13,8 @@ import DesignSystem
 final class LoginViewController: UIViewController {
     
     // MARK: - Properties
-    private var cancelBag = Set<AnyCancellable>()
-    private let viewModel = LoginViewModel()
+    private var subscriptions = Set<AnyCancellable>()
+    private var viewModel: LoginViewModel!
     
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -26,7 +26,7 @@ final class LoginViewController: UIViewController {
     
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
-        // TODO: 디자인 시스템이 있긴한데 현재 작동 안 됨. 원인 파악해야함
+        // MARK: 디자인 시스템이 있긴한데 현재 작동 안 됨. 원인 파악해야함
         imageView.image = DesignSystemImages.Image(assetName: "img_logo")
 //        imageView.image = UIImage(.imgLogo)
         imageView.contentMode = .scaleAspectFit
@@ -127,15 +127,68 @@ final class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        viewModel = LoginViewModel()
         view.backgroundColor = .backgroundNeutral
         configureUI()
         createLayout()
         hideKeyboardWhenTappedBackground()
         self.segmentedControl.selectedSegmentIndex = 0
+        bind()
     }
     
     // MARK: - Function
-    
+    private func bind() {
+        
+
+        
+        
+        
+        
+        phoneNumberField
+            .myTextPubliser
+            .receive(on: RunLoop.main) // 스케쥴러
+            .assign(to: \.phoneNumberInput, on: viewModel) // viewModel의 ...Input으로 전달하기
+            .store(in: &subscriptions)
+        passwordField
+            .myTextPubliser
+            .receive(on: RunLoop.main) // 스케쥴러
+            .assign(to: \.passwordInput, on: viewModel) // viewModel의 ...Input으로 전달하기
+            .store(in: &subscriptions)
+        
+        viewModel.isValid
+            .print()
+            .receive(on: RunLoop.main)
+            // 구독
+            .assign(to: \.isValid, on: loginButton)
+            .store(in: &subscriptions)
+    }
+}
+
+extension UITextField {
+    var myTextPubliser: AnyPublisher<String, Never> {
+        // 글자가 변경된걸 말하는 노티피케 이션
+        NotificationCenter.default.publisher(for: UITextField.textDidChangeNotification, object: self)
+            // UITextField 가져옴
+            .compactMap { $0.object as? UITextField }
+            // String 가져옴
+            .map { $0.text ?? "" }
+//            .print() // 여기에 프린트해서 테스트 가능
+            // 기존 매핑되어 있는걸 anypublisher로 해줌
+            .eraseToAnyPublisher()
+    }
+}
+
+extension UIButton {
+    var isValid: Bool {
+        get {
+            backgroundColor == .yellow
+        }
+        set {
+            backgroundColor = newValue ? .yellow: .lightGray
+            isEnabled = newValue
+            setTitleColor(newValue ? .blue: .white, for: .normal)
+        }
+    }
 }
 
 // MARK: - UI Function
