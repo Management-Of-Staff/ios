@@ -26,7 +26,9 @@ final class LoginViewController: UIViewController {
     
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(.imgLogo)
+        // 디자인 시스템이 있긴한데 현재 작동 안 됨. 원인 파악해야함
+        imageView.image = DesignSystemImages.Image(assetName: "img_logo")
+//        imageView.image = UIImage(.imgLogo)
         imageView.contentMode = .scaleAspectFit
         imageView.backgroundColor = .lightGray
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -35,6 +37,8 @@ final class LoginViewController: UIViewController {
     
     private let segmentedControl: UISegmentedControl = {
         let control = UISegmentedControl(items: ["오너 로그인", "직원 로그인"])
+        let attribute = [NSAttributedString.Key.foregroundColor: UIColor.black4, NSAttributedString.Key.font: UIFont.doingFont(size: .caption, weight: .regular)]
+        control.setTitleTextAttributes(attribute as [NSAttributedString.Key: Any], for: .normal)
         control.translatesAutoresizingMaskIntoConstraints = false
         return control
     }()
@@ -42,10 +46,8 @@ final class LoginViewController: UIViewController {
     private let loginStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.spacing = 20
         stackView.alignment = .fill
-        stackView.distribution = .fillEqually
-        stackView.backgroundColor = .systemGray5
+        stackView.distribution = .equalSpacing
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -61,6 +63,7 @@ final class LoginViewController: UIViewController {
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 0))
         field.leftViewMode = .always
         field.clearButtonMode = .whileEditing
+        field.textColor = .disabledText
         field.backgroundColor = .neutral2
         field.translatesAutoresizingMaskIntoConstraints = false
         return field
@@ -77,6 +80,7 @@ final class LoginViewController: UIViewController {
         field.leftViewMode = .always
         field.clearButtonMode = .whileEditing
         field.isSecureTextEntry = true
+        field.textColor = .disabledText
         field.backgroundColor = .neutral2
         field.translatesAutoresizingMaskIntoConstraints = false
         return field
@@ -89,21 +93,15 @@ final class LoginViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 6
         button.layer.masksToBounds = true
-        // 폰트는 수정해야함
         button.titleLabel?.font = .doingFont(size: .button, weight: .bold)
-        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
-    // 하단에 비밀번호 찾기 버튼과 회원가입 버튼 <- 스택 뷰
-    
     let bottomStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
-        stackView.spacing = 10
-        stackView.distribution = .fillEqually
-        stackView.backgroundColor = .systemGray6
+        stackView.distribution = .equalSpacing
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -111,8 +109,8 @@ final class LoginViewController: UIViewController {
     private let findPasswordButton: UIButton = {
         let button = UIButton()
         button.setTitle("비밀번호 찾기", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
-        button.setTitleColor(.black, for: .normal)
+        button.titleLabel?.font = .doingFont(size: .button, weight: .medium)
+        button.setTitleColor(.black4, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -120,8 +118,8 @@ final class LoginViewController: UIViewController {
     private let signInButton: UIButton = {
         let button = UIButton()
         button.setTitle("회원가입", for: .normal)
-        button.setTitleColor(.red, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
+        button.titleLabel?.font = .doingFont(size: .button, weight: .medium)
+        button.setTitleColor(.mainOwner, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -133,6 +131,8 @@ final class LoginViewController: UIViewController {
         view.backgroundColor = .backgroundNeutral
         configureUI()
         createLayout()
+        hideKeyboardWhenTappedBackground()
+        self.segmentedControl.selectedSegmentIndex = 0
     }
     
     // MARK: - Function
@@ -144,11 +144,58 @@ final class LoginViewController: UIViewController {
 extension LoginViewController {
     
     private func configureUI() {
-        
+        view.addSubview(scrollView)
+        scrollView.addSubviews(logoImageView, segmentedControl, loginStackView, bottomStackView)
+        loginStackView.addArrangedSubviews(phoneNumberField, passwordField, loginButton)
+        bottomStackView.addArrangedSubviews(findPasswordButton, signInButton)
     }
     
     private func createLayout() {
+        let loginStackWidth: CGFloat = 327/375
+        let loginStackHeight: CGFloat = 204/812
+        let loginButtonHeight: CGFloat = 52/812
+        let textFieldHeight: CGFloat = 56/812
         
+        let segmentWidth: CGFloat = 327/375
+        let segmentHeight: CGFloat = 43/812
+        let logoHeight: CGFloat = 201/812
+        
+        let bottomStackWidth: CGFloat = 220/375
+        let bottomStackHeight: CGFloat = 40/812
+        
+        NSLayoutConstraint.activate([
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            
+            logoImageView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            logoImageView.topAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.topAnchor, constant: 0),
+            logoImageView.widthAnchor.constraint(equalTo: view.widthAnchor),
+            logoImageView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: logoHeight),
+            
+            segmentedControl.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 10),
+            segmentedControl.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            segmentedControl.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: segmentWidth),
+            segmentedControl.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: segmentHeight),
+            
+            loginStackView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 30),
+            loginStackView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            loginStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: loginStackWidth),
+            loginStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: loginStackHeight),
+            
+            phoneNumberField.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: textFieldHeight),
+            passwordField.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: textFieldHeight),
+            loginButton.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: loginButtonHeight),
+            
+            bottomStackView.topAnchor.constraint(equalTo: loginStackView.bottomAnchor, constant: 30),
+            bottomStackView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            bottomStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: bottomStackWidth),
+            bottomStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: bottomStackHeight),
+            
+            findPasswordButton.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: bottomStackHeight),
+            signInButton.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: bottomStackHeight)
+        ])
     }
     
 }

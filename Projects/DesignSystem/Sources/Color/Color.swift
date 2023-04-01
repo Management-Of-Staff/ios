@@ -19,4 +19,10 @@ public enum Color: String {
     case neutral1
     case neutral2
     case neutral3
+    
+    case black1
+    case black2
+    case black3
+    case black4
+    case disabledText
 }

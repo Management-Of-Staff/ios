@@ -18,8 +18,16 @@ public extension UIColor {
     
     // MARK: Background
     static let backgroundNeutral = doingColor(.backgroundNeutral)
+    
     static let mainOwner = doingColor(.mainOwner)
     static let neutral1 = doingColor(.neutral1)
     static let neutral2 = doingColor(.neutral2)
     static let neutral3 = doingColor(.neutral3)
+    
+    static let black1 = doingColor(.black1)
+    static let black2 = doingColor(.black2)
+    static let black3 = doingColor(.black3)
+    static let black4 = doingColor(.black4)
+    
+    static let disabledText = doingColor(.disabledText)
 }
