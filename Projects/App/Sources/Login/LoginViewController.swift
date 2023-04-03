@@ -140,14 +140,14 @@ final class LoginViewController: UIViewController {
     // MARK: - Function
     
     private func remakeConstraintsByKeyboard(_ state: KeyboardState) {
-        guard let keyboardEndFrameHeight = self.keyboardEndFrameHeight else { return }
-        print(keyboardEndFrameHeight)
+        guard self.keyboardEndFrameHeight != nil else {
+            return
+        }
+//        guard let keyboardEndFrameHeight = self.keyboardEndFrameHeight else { return }
         switch state {
         case .show:
-            print("show")
-            self.view.frame.origin.y = -150
+            self.view.frame.origin.y = -100
         case .hide:
-            print("hide")
             self.view.frame.origin.y = 0
         }
     }
@@ -156,19 +156,19 @@ final class LoginViewController: UIViewController {
         
         phoneNumberField
             .myTextPubliser
-            .receive(on: RunLoop.main) // 스케쥴러
-            .assign(to: \.phoneNumberInput, on: viewModel) // viewModel의 ...Input으로 전달하기
+            .receive(on: RunLoop.main)
+            .assign(to: \.phoneNumberInput, on: viewModel)
             .store(in: &subscriptions)
+        
         passwordField
             .myTextPubliser
-            .receive(on: RunLoop.main) // 스케쥴러
-            .assign(to: \.passwordInput, on: viewModel) // viewModel의 ...Input으로 전달하기
+            .receive(on: RunLoop.main)
+            .assign(to: \.passwordInput, on: viewModel)
             .store(in: &subscriptions)
         
         viewModel.isValid
             .print()
             .receive(on: RunLoop.main)
-            // 구독
             .assign(to: \.isValid, on: loginButton)
             .store(in: &subscriptions)
         
@@ -214,12 +214,12 @@ extension UITextField {
 extension UIButton {
     var isValid: Bool {
         get {
-            backgroundColor == .yellow
+            backgroundColor == .doingColor(.mainOwner)
         }
         set {
-            backgroundColor = newValue ? .yellow: .lightGray
+            backgroundColor = newValue ? .doingColor(.mainOwner): .lightGray
             isEnabled = newValue
-            setTitleColor(newValue ? .blue: .white, for: .normal)
+            setTitleColor(newValue ? .doingColor(.backgroundNeutral): .white, for: .normal)
         }
     }
 }
@@ -239,7 +239,8 @@ extension LoginViewController {
     
     @objc
     private func didTapLoginButton() {
-        // MARK: 임시 Alert 나중에 커스텀으로 만들어 줘야함. 기본 틀은 대충 만들었는데 나중에 수정할것 -> ConfirmViewController (Alert으로 할까 생각중)
+        // MARK: 임시 Alert 나중에 커스텀으로 만들어 줘야함.
+        // 기본 틀은 대충 만들었는데 나중에 수정할것 -> ConfirmViewController (Alert으로 할까 생각중)
         let alert = UIAlertController(title: "", message: "전화번호 또는 비밀번호가 일치하지 않습니다.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "예", style: .default))
         present(alert, animated: true)

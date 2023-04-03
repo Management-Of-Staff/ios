@@ -10,4 +10,5 @@ import Foundation
 
 public enum Asset: String {
     case imgLogo
+    case imgCheck
 }
