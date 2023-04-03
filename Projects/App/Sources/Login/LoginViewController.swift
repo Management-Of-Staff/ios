@@ -15,6 +15,7 @@ final class LoginViewController: UIViewController {
     // MARK: - Properties
     private var subscriptions = Set<AnyCancellable>()
     private var viewModel: LoginViewModel!
+    private var keyboardEndFrameHeight: CGFloat?
     
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -137,12 +138,21 @@ final class LoginViewController: UIViewController {
     }
     
     // MARK: - Function
-    private func bind() {
-        
+    
+    private func remakeConstraintsByKeyboard(_ state: KeyboardState) {
+        guard let keyboardEndFrameHeight = self.keyboardEndFrameHeight else { return }
+        print(keyboardEndFrameHeight)
+        switch state {
+        case .show:
+            print("show")
+            self.view.frame.origin.y = -150
+        case .hide:
+            print("hide")
+            self.view.frame.origin.y = 0
+        }
+    }
 
-        
-        
-        
+    private func bind() {
         
         phoneNumberField
             .myTextPubliser
@@ -161,6 +171,29 @@ final class LoginViewController: UIViewController {
             // 구독
             .assign(to: \.isValid, on: loginButton)
             .store(in: &subscriptions)
+        
+        NotificationCenter.default
+            .publisher(for: UIApplication.keyboardWillShowNotification)
+            .sink { [weak self] notification in
+                guard let self = self else { return }
+                if self.keyboardEndFrameHeight == nil {
+                    guard let endFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+                    self.keyboardEndFrameHeight = endFrame.cgRectValue.height
+                }
+                self.remakeConstraintsByKeyboard(.show)
+                self.view.layoutIfNeeded()
+            }
+            .store(in: &subscriptions)
+        
+        NotificationCenter.default
+            .publisher(for: UIApplication.keyboardWillHideNotification)
+            .sink { [weak self ] _ in
+                guard let self = self else { return }
+                self.remakeConstraintsByKeyboard(.hide)
+                self.view.layoutIfNeeded()
+            }
+            .store(in: &subscriptions)
+
     }
 }
 
@@ -200,6 +233,16 @@ extension LoginViewController {
         scrollView.addSubviews(logoImageView, segmentedControl, loginStackView, bottomStackView)
         loginStackView.addArrangedSubviews(phoneNumberField, passwordField, loginButton)
         bottomStackView.addArrangedSubviews(findPasswordButton, signInButton)
+        
+        loginButton.addTarget(self, action: #selector(didTapLoginButton), for: .touchUpInside)
+    }
+    
+    @objc
+    private func didTapLoginButton() {
+        // MARK: 임시 Alert 나중에 커스텀으로 만들어 줘야함. 기본 틀은 대충 만들었는데 나중에 수정할것 -> ConfirmViewController (Alert으로 할까 생각중)
+        let alert = UIAlertController(title: "", message: "전화번호 또는 비밀번호가 일치하지 않습니다.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "예", style: .default))
+        present(alert, animated: true)
     }
     
     private func createLayout() {
@@ -249,5 +292,11 @@ extension LoginViewController {
             signInButton.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: bottomStackHeight)
         ])
     }
-    
+}
+
+extension LoginViewController {
+    private enum KeyboardState {
+        case show
+        case hide
+    }
 }
