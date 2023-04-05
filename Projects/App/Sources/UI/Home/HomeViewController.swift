@@ -7,12 +7,13 @@
 //
 
 import UIKit
+import DesignSystem
 
 class HomeViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .doingColor(.backgroundNeutral)
     }
 
 }

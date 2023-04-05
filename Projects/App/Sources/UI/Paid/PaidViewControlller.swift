@@ -15,6 +15,5 @@ class PaidViewControlller: UIViewController {
         view.backgroundColor = .white
 
     }
-
-
+    
 }

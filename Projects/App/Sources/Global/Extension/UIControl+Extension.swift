@@ -10,6 +10,7 @@ import UIKit
 import Combine
 
 extension UIControl {
+    
     func controlPublisher(for event: UIControl.Event) -> UIControl.EventPublisher {
         return UIControl.EventPublisher(control: self, event: event)
       }
@@ -22,7 +23,7 @@ extension UIControl {
         let control: UIControl
         let event: UIControl.Event
         
-        func receive<S>(subscriber: S) where S : Subscriber, Never == S.Failure, UIControl == S.Input {
+        func receive<S>(subscriber: S) where S: Subscriber, Never == S.Failure, UIControl == S.Input {
             let subscription = EventSubscription(control: control, subscrier: subscriber, event: event)
             subscriber.receive(subscription: subscription)
         }
@@ -55,7 +56,6 @@ extension UIControl {
         }
     }
 }
-
 
 extension UITextField {
     var textPublisher: AnyPublisher<String, Never> {
