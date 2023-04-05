@@ -14,7 +14,7 @@ final class LoginViewController: UIViewController {
     
     // MARK: - Properties
     private var cancellables = Set<AnyCancellable>()
-//    private var viewModel: LoginViewModel!
+    private let viewModel = LoginViewModel()
     private var keyboardEndFrameHeight: CGFloat?
     
     let scrollView: UIScrollView = {
@@ -89,10 +89,12 @@ final class LoginViewController: UIViewController {
     private let loginButton: UIButton = {
         let button = UIButton()
         button.setTitle("로그인", for: .normal)
-        button.backgroundColor = .mainOwner
+//        button.backgroundColor = .mainOwner
+        button.backgroundColor = .gray
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 6
         button.layer.masksToBounds = true
+        button.isEnabled = false
         button.titleLabel?.font = .doingFont(size: .button, weight: .bold)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -128,13 +130,12 @@ final class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        viewModel = LoginViewModel()
         view.backgroundColor = .backgroundNeutral
         configureUI()
         createLayout()
         hideKeyboardWhenTappedBackground()
         self.segmentedControl.selectedSegmentIndex = 0
-        bind()
+        bind(to: viewModel)
     }
     
     // MARK: - Function
@@ -143,7 +144,6 @@ final class LoginViewController: UIViewController {
         guard self.keyboardEndFrameHeight != nil else {
             return
         }
-//        guard let keyboardEndFrameHeight = self.keyboardEndFrameHeight else { return }
         switch state {
         case .show:
             self.view.frame.origin.y = -100
@@ -152,51 +152,28 @@ final class LoginViewController: UIViewController {
         }
     }
 
-    private func bind() {
+    private func bind(to viewModel: LoginViewModel) {
         
-//        phoneNumberField
-//            .publisher
-//            .receive(on: RunLoop.main)
-//            .assign(to: \.phoneNumberText, on: viewModel)
-//            .store(in: &subscriptions)
-//
-//        passwordField
-//            .publisher
-//            .receive(on: RunLoop.main)
-//            .assign(to: \.passwordText, on: viewModel)
-//            .store(in: &subscriptions)
+        let input = LoginViewModel.Input(
+            phoneNumber: phoneNumberField.textPublisher.eraseToAnyPublisher(),
+            password: passwordField.textPublisher.eraseToAnyPublisher()
+        )
 
-//        let input = LoginViewModel.Input(
-//            phoneNumber: phoneNumberField.textPublisher.compactMap { $0 }.eraseToAnyPublisher(),
-//            password: passwordField.textPublisher.compactMap { $0 }.eraseToAnyPublisher(),
-//            tapLoginButton: loginButton.tapPublisher.eraseToAnyPublisher()
-//        )
-//
-//        loginButton.tapPublisher
-//            .sink(receiveValue: { _ in
-//                print("123")
-//            })
-//            .store(in: &cancellables)
-//
-//        let output = viewModel.transform(input: input)
-//
-//        output.resultPhoneNumber
-//            .sink { [weak self] in
-//                self?.phoneNumberField.text = $0 }
-//            .store(in: &cancellables)
-//
-//        output.resultPassword
-//            .sink { [weak self] in
-//                self?.passwordField.text = $0 }
-//            .store(in: &cancellables)
-//
-//        output.isButtonEnabled
-//            .sink { [weak self] state in
-//                print(state)
-//                self?.loginButton.isEnabled = state
-//                self?.loginButton.backgroundColor = state ? .doingColor(.mainOwner) : .gray
-//            }
-//            .store(in: &cancellables)
+        let output = viewModel.transform(input: input)
+        
+        output.resultPhoneNumber
+            .sink { [weak self] in
+                self?.phoneNumberField.text = $0 }
+            .store(in: &cancellables)
+        
+        output.buttonState
+            .sink { [weak self] state in
+                self?.loginButton.isEnabled = state
+                self?.loginButton.backgroundColor = state ? .doingColor(.mainOwner) : .gray
+            }
+            .store(in: &cancellables)
+
+        loginButton.addTarget(self, action: #selector(didTapLoginButton), for: .touchUpInside)
         
         NotificationCenter.default
             .publisher(for: UIApplication.keyboardWillShowNotification)
@@ -223,19 +200,6 @@ final class LoginViewController: UIViewController {
     }
 }
 
-extension UIButton {
-    var isValid: Bool {
-        get {
-            backgroundColor == .doingColor(.mainOwner)
-        }
-        set {
-            backgroundColor = newValue ? .doingColor(.mainOwner): .lightGray
-            isEnabled = newValue
-            setTitleColor(newValue ? .doingColor(.backgroundNeutral): .white, for: .normal)
-        }
-    }
-}
-
 // MARK: - UI Function
 
 extension LoginViewController {
@@ -245,14 +209,14 @@ extension LoginViewController {
         scrollView.addSubviews(logoImageView, segmentedControl, loginStackView, bottomStackView)
         loginStackView.addArrangedSubviews(phoneNumberField, passwordField, loginButton)
         bottomStackView.addArrangedSubviews(findPasswordButton, signInButton)
-        
-        loginButton.addTarget(self, action: #selector(didTapLoginButton), for: .touchUpInside)
     }
     
     @objc
     private func didTapLoginButton() {
         // MARK: 임시 Alert 나중에 커스텀으로 만들어 줘야함.
         // 기본 틀은 대충 만들었는데 나중에 수정할것 -> ConfirmViewController (Alert으로 할까 생각중)
+        print(phoneNumberField.text!)
+        print(passwordField.text!)
         show(TabViewController(), sender: self)
 //        let alert = UIAlertController(title: "", message: "전화번호 또는 비밀번호가 일치하지 않습니다.", preferredStyle: .alert)
 //        alert.addAction(UIAlertAction(title: "예", style: .default))

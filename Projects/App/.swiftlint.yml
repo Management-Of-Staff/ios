@@ -4,6 +4,8 @@ disabled_rules:
 - function_body_length
 - empty_enum_arguments
 - force_cast
+- nesting
+
 excluded:
   - Sources/Application/AppDelegate.swift
   - Sources/Application/SceneDelegate.swift
