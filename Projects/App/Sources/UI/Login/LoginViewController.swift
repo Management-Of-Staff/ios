@@ -89,7 +89,6 @@ final class LoginViewController: UIViewController {
     private let loginButton: UIButton = {
         let button = UIButton()
         button.setTitle("로그인", for: .normal)
-//        button.backgroundColor = .mainOwner
         button.backgroundColor = .gray
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 6
@@ -117,7 +116,7 @@ final class LoginViewController: UIViewController {
         return button
     }()
     
-    private let signInButton: UIButton = {
+    private let signUpButton: UIButton = {
         let button = UIButton()
         button.setTitle("회원가입", for: .normal)
         button.titleLabel?.font = .doingFont(size: .button, weight: .medium)
@@ -175,6 +174,9 @@ final class LoginViewController: UIViewController {
 
         loginButton.addTarget(self, action: #selector(didTapLoginButton), for: .touchUpInside)
         
+        findPasswordButton.addTarget(self, action: #selector(didTapFindPasswordButton), for: .touchUpInside)
+        
+        signUpButton.addTarget(self, action: #selector(didTapSignUpButton), for: .touchUpInside)
         NotificationCenter.default
             .publisher(for: UIApplication.keyboardWillShowNotification)
             .sink { [weak self] notification in
@@ -196,7 +198,6 @@ final class LoginViewController: UIViewController {
                 self.view.layoutIfNeeded()
             }
             .store(in: &cancellables)
-
     }
 }
 
@@ -208,7 +209,7 @@ extension LoginViewController {
         view.addSubview(scrollView)
         scrollView.addSubviews(logoImageView, segmentedControl, loginStackView, bottomStackView)
         loginStackView.addArrangedSubviews(phoneNumberField, passwordField, loginButton)
-        bottomStackView.addArrangedSubviews(findPasswordButton, signInButton)
+        bottomStackView.addArrangedSubviews(findPasswordButton, signUpButton)
     }
     
     @objc
@@ -221,6 +222,16 @@ extension LoginViewController {
 //        let alert = UIAlertController(title: "", message: "전화번호 또는 비밀번호가 일치하지 않습니다.", preferredStyle: .alert)
 //        alert.addAction(UIAlertAction(title: "예", style: .default))
 //        present(alert, animated: true)
+    }
+    
+    @objc
+    private func didTapFindPasswordButton() {
+        show(FindPasswordViewController(), sender: self)
+    }
+    
+    @objc
+    private func didTapSignUpButton() {
+        show(SignUpOwnerViewController(), sender: self)
     }
     
     private func createLayout() {
@@ -267,7 +278,7 @@ extension LoginViewController {
             bottomStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: bottomStackHeight),
             
             findPasswordButton.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: bottomStackHeight),
-            signInButton.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: bottomStackHeight)
+            signUpButton.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: bottomStackHeight)
         ])
     }
 }
