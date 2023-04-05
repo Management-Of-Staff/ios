@@ -155,21 +155,47 @@ final class LoginViewController: UIViewController {
     private func bind() {
         
         phoneNumberField
-            .myTextPubliser
+            .publisher
             .receive(on: RunLoop.main)
-            .assign(to: \.phoneNumberInput, on: viewModel)
+            .assign(to: \.phoneNumberText, on: viewModel)
             .store(in: &subscriptions)
         
         passwordField
-            .myTextPubliser
+            .publisher
             .receive(on: RunLoop.main)
-            .assign(to: \.passwordInput, on: viewModel)
+            .assign(to: \.passwordText, on: viewModel)
             .store(in: &subscriptions)
         
-        viewModel.isValid
-            .print()
-            .receive(on: RunLoop.main)
-            .assign(to: \.isValid, on: loginButton)
+//        viewModel.$isValid
+//            .print()
+//            .receive(on: RunLoop.main)
+//            .assign(to: \.isValid, on: loginButton)
+//            .store(in: &subscriptions)
+        viewModel.$isValidPhoneNumber
+            .sink { [weak self] isValid in
+//                self?.idValidView.isHidden = isValid
+            }
+            .store(in: &subscriptions)
+        
+        viewModel.$isValidPassword
+            .sink { [weak self] isValid in
+//                self?.pwValidView.isHidden = isValid
+            }
+            .store(in: &subscriptions)
+        
+        viewModel.$isValidButton
+            .sink { [weak self] isValid in
+                
+                self?.loginButton.backgroundColor = isValid ? .doingColor(.mainOwner): .lightGray
+                self?.loginButton.isEnabled = isValid
+//                setTitleColor(isValid ? .doingColor(.backgroundNeutral): .white, for: .normal)
+                
+                
+                
+                
+                let color = isValid ? UIColor.systemBlue : UIColor.systemGray
+                self?.loginButton.backgroundColor = color
+            }
             .store(in: &subscriptions)
         
         NotificationCenter.default
@@ -194,20 +220,6 @@ final class LoginViewController: UIViewController {
             }
             .store(in: &subscriptions)
 
-    }
-}
-
-extension UITextField {
-    var myTextPubliser: AnyPublisher<String, Never> {
-        // 글자가 변경된걸 말하는 노티피케 이션
-        NotificationCenter.default.publisher(for: UITextField.textDidChangeNotification, object: self)
-            // UITextField 가져옴
-            .compactMap { $0.object as? UITextField }
-            // String 가져옴
-            .map { $0.text ?? "" }
-//            .print() // 여기에 프린트해서 테스트 가능
-            // 기존 매핑되어 있는걸 anypublisher로 해줌
-            .eraseToAnyPublisher()
     }
 }
 

@@ -8,33 +8,16 @@
 
 import Combine
 
-protocol LoginViewModelType {
-    associatedtype Input
-    associatedtype Output
-    func transform(input: Input) -> Output
-}
-
-final class LoginViewModel: LoginViewModelType {
+final class LoginViewModel: ViewModelType {
     
     // MARK: - Properties
     private var cancelBag = Set<AnyCancellable>()
-    @Published var phoneNumberInput: String = ""
-    @Published var passwordInput: String = ""
+    @Published var phoneNumberText: String = ""
+    @Published var passwordText: String = ""
     
-    lazy var isValid: AnyPublisher<Bool, Never> = Publishers
-        .CombineLatest($phoneNumberInput, $passwordInput)
-        .map({ (phoneNumber: String, password: String) in
-            if phoneNumber == "" || password == "" {
-                return false
-            }
-            if phoneNumber == password {
-                return true
-            } else {
-                return false
-            }
-        })
-        .print()
-        .eraseToAnyPublisher()
+    @Published var isValidPhoneNumber = false
+    @Published var isValidPassword = false
+    @Published var isValidButton = false
 
     struct Input {
         
@@ -44,11 +27,36 @@ final class LoginViewModel: LoginViewModelType {
         
     }
     
-    // MARK: - Functions
-    
-    func transform(input: Input) -> Output {
+    init() {
+        $phoneNumberText
+            .map(checkValidPhoneNumber)
+            .assign(to: \.isValidPhoneNumber, on: self)
+            .store(in: &cancelBag)
         
-        return Output()
+        $passwordText
+            .map(checkValidPassword)
+            .assign(to: \.isValidPassword, on: self)
+            .store(in: &cancelBag)
+        
+        $isValidPhoneNumber.combineLatest($isValidPassword)
+            .map(checkValidBoth)
+            .assign(to: \.isValidButton, on: self)
+            .store(in: &cancelBag)
+    }
+}
+
+extension LoginViewModel {
+
+    private func checkValidPhoneNumber(number: String) -> Bool {
+        return number.count > 12
+    }
+    
+    private func checkValidPassword(password: String) -> Bool {
+        return password.count > 6
+    }
+    
+    private func checkValidBoth(number: Bool, password: Bool) -> Bool {
+        return number && password
     }
     
 }
