@@ -13,8 +13,8 @@ import DesignSystem
 final class LoginViewController: UIViewController {
     
     // MARK: - Properties
-    private var subscriptions = Set<AnyCancellable>()
-    private var viewModel: LoginViewModel!
+    private var cancellables = Set<AnyCancellable>()
+//    private var viewModel: LoginViewModel!
     private var keyboardEndFrameHeight: CGFloat?
     
     let scrollView: UIScrollView = {
@@ -128,7 +128,7 @@ final class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel = LoginViewModel()
+//        viewModel = LoginViewModel()
         view.backgroundColor = .backgroundNeutral
         configureUI()
         createLayout()
@@ -166,38 +166,37 @@ final class LoginViewController: UIViewController {
 //            .assign(to: \.passwordText, on: viewModel)
 //            .store(in: &subscriptions)
 
-        let input = viewModel.Input(
-            phoneNumber: phoneNumberField.textPublisher.compactMap { $0 }.eraseToAnyPublisher(),
-            password: passwordField.textPublisher.compactMap { $0 }.eraseToAnyPublisher(),
-            tapLoginButton: loginButton.tapPublisher.eraseToAnyPublisher()
-        )
-        
-        loginButton.tapPublisher
-            .sink(receiveValue: { _ in
-                print("123")
-            })
-            .store(in: &cancellables)
-        
-        let output = viewModel.transform(input: input)
-        
-        output.resultPhoneNumber
-            .sink { [weak self] in
-                self?.phoneNumberField.text = $0 }
-            .store(in: &cancellables)
-        
-        output.resultPassword
-            .sink { [weak self] in
-                self?.passwordField.text = $0 }
-            .store(in: &cancellables)
-        
-        output.isButtonEnabled
-            .sink { [weak self] state in
-                print(state)
-                self?.loginButton.isEnabled = state
-                self?.loginButton.backgroundColor = state ? .doingOwnerBlue : .gray
-            }
-            .store(in: &cancellables)
-        
+//        let input = LoginViewModel.Input(
+//            phoneNumber: phoneNumberField.textPublisher.compactMap { $0 }.eraseToAnyPublisher(),
+//            password: passwordField.textPublisher.compactMap { $0 }.eraseToAnyPublisher(),
+//            tapLoginButton: loginButton.tapPublisher.eraseToAnyPublisher()
+//        )
+//
+//        loginButton.tapPublisher
+//            .sink(receiveValue: { _ in
+//                print("123")
+//            })
+//            .store(in: &cancellables)
+//
+//        let output = viewModel.transform(input: input)
+//
+//        output.resultPhoneNumber
+//            .sink { [weak self] in
+//                self?.phoneNumberField.text = $0 }
+//            .store(in: &cancellables)
+//
+//        output.resultPassword
+//            .sink { [weak self] in
+//                self?.passwordField.text = $0 }
+//            .store(in: &cancellables)
+//
+//        output.isButtonEnabled
+//            .sink { [weak self] state in
+//                print(state)
+//                self?.loginButton.isEnabled = state
+//                self?.loginButton.backgroundColor = state ? .doingColor(.mainOwner) : .gray
+//            }
+//            .store(in: &cancellables)
         
         NotificationCenter.default
             .publisher(for: UIApplication.keyboardWillShowNotification)
@@ -210,7 +209,7 @@ final class LoginViewController: UIViewController {
                 self.remakeConstraintsByKeyboard(.show)
                 self.view.layoutIfNeeded()
             }
-            .store(in: &subscriptions)
+            .store(in: &cancellables)
         
         NotificationCenter.default
             .publisher(for: UIApplication.keyboardWillHideNotification)
@@ -219,7 +218,7 @@ final class LoginViewController: UIViewController {
                 self.remakeConstraintsByKeyboard(.hide)
                 self.view.layoutIfNeeded()
             }
-            .store(in: &subscriptions)
+            .store(in: &cancellables)
 
     }
 }
@@ -254,9 +253,10 @@ extension LoginViewController {
     private func didTapLoginButton() {
         // MARK: 임시 Alert 나중에 커스텀으로 만들어 줘야함.
         // 기본 틀은 대충 만들었는데 나중에 수정할것 -> ConfirmViewController (Alert으로 할까 생각중)
-        let alert = UIAlertController(title: "", message: "전화번호 또는 비밀번호가 일치하지 않습니다.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "예", style: .default))
-        present(alert, animated: true)
+        show(TabViewController(), sender: self)
+//        let alert = UIAlertController(title: "", message: "전화번호 또는 비밀번호가 일치하지 않습니다.", preferredStyle: .alert)
+//        alert.addAction(UIAlertAction(title: "예", style: .default))
+//        present(alert, animated: true)
     }
     
     private func createLayout() {
