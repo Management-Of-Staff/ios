@@ -11,37 +11,61 @@ import Combine
 final class LoginViewModel: ViewModelType {
     
     // MARK: - Properties
-    private var cancelBag = Set<AnyCancellable>()
-    @Published var phoneNumberText: String = ""
-    @Published var passwordText: String = ""
+    private var cancellables = Set<AnyCancellable>()
+//    @Published var phoneNumberText: String = ""
+//    @Published var passwordText: String = ""
     
     @Published var isValidPhoneNumber = false
     @Published var isValidPassword = false
     @Published var isValidButton = false
 
     struct Input {
-        
-    }
-
-    struct Output {
-        
+        let phoneNumber: AnyPublisher<String, Never>
+        let password: AnyPublisher<String, Never>
+        let tapLoginButton: AnyPublisher<Void, Never>
     }
     
-    init() {
-        $phoneNumberText
-            .map(checkValidPhoneNumber)
-            .assign(to: \.isValidPhoneNumber, on: self)
-            .store(in: &cancelBag)
+    private let phoneNumber = CurrentValueSubject<String, Never>("")
+    private let password = CurrentValueSubject<String, Never>("")
+    private var isValidButton: AnyPublisher<Bool, Never>
+    
+    struct Output {
+        let resultPhoneNumber: AnyPublisher<String, Never>
+        let resultPassword: AnyPublisher<String, Never>
+        let isButtonEnabled: AnyPublisher<Bool, Never>
+    }
+    
+    init(){}
+    
+    
+    func transform(input: Input) -> Output {
+        input.phoneNumber
+            .map { text -> String in
+                let filteredText = text.filter("0123456789".contains)
+                if filteredText.count > 13 {
+                    return String(filteredText.prefix(13))
+                }
+                return filteredText
+            }
+            .assign(to: \.value, on: phoneNumber)
+            .store(in: &cancellables)
         
-        $passwordText
-            .map(checkValidPassword)
-            .assign(to: \.isValidPassword, on: self)
-            .store(in: &cancelBag)
+        input.password
+            .map { $0 }
+            .assign(to: \.value, on: password)
+            .store(in: &cancellables)
         
-        $isValidPhoneNumber.combineLatest($isValidPassword)
-            .map(checkValidBoth)
-            .assign(to: \.isValidButton, on: self)
-            .store(in: &cancelBag)
+        let buttonState = input.phoneNumber.combineLatest(input.password)
+            .map({ phone, pass in
+                !phone.isEmpty && !pass.isEmpty && phone.count > 12 && pass.count > 6
+            })
+            .eraseToAnyPublisher()
+        
+        return Output(
+            resultPhoneNumber: phoneNumber.eraseToAnyPublisher(),
+            resultPassword: password.eraseToAnyPublisher(),
+            isButtonEnabled: buttonState
+        )
     }
 }
 

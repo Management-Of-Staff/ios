@@ -154,49 +154,50 @@ final class LoginViewController: UIViewController {
 
     private func bind() {
         
-        phoneNumberField
-            .publisher
-            .receive(on: RunLoop.main)
-            .assign(to: \.phoneNumberText, on: viewModel)
-            .store(in: &subscriptions)
-        
-        passwordField
-            .publisher
-            .receive(on: RunLoop.main)
-            .assign(to: \.passwordText, on: viewModel)
-            .store(in: &subscriptions)
-        
-//        viewModel.$isValid
-//            .print()
+//        phoneNumberField
+//            .publisher
 //            .receive(on: RunLoop.main)
-//            .assign(to: \.isValid, on: loginButton)
+//            .assign(to: \.phoneNumberText, on: viewModel)
 //            .store(in: &subscriptions)
-        viewModel.$isValidPhoneNumber
-            .sink { [weak self] isValid in
-//                self?.idValidView.isHidden = isValid
-            }
-            .store(in: &subscriptions)
+//
+//        passwordField
+//            .publisher
+//            .receive(on: RunLoop.main)
+//            .assign(to: \.passwordText, on: viewModel)
+//            .store(in: &subscriptions)
+
+        let input = viewModel.Input(
+            phoneNumber: phoneNumberField.textPublisher.compactMap { $0 }.eraseToAnyPublisher(),
+            password: passwordField.textPublisher.compactMap { $0 }.eraseToAnyPublisher(),
+            tapLoginButton: loginButton.tapPublisher.eraseToAnyPublisher()
+        )
         
-        viewModel.$isValidPassword
-            .sink { [weak self] isValid in
-//                self?.pwValidView.isHidden = isValid
-            }
-            .store(in: &subscriptions)
+        loginButton.tapPublisher
+            .sink(receiveValue: { _ in
+                print("123")
+            })
+            .store(in: &cancellables)
         
-        viewModel.$isValidButton
-            .sink { [weak self] isValid in
-                
-                self?.loginButton.backgroundColor = isValid ? .doingColor(.mainOwner): .lightGray
-                self?.loginButton.isEnabled = isValid
-//                setTitleColor(isValid ? .doingColor(.backgroundNeutral): .white, for: .normal)
-                
-                
-                
-                
-                let color = isValid ? UIColor.systemBlue : UIColor.systemGray
-                self?.loginButton.backgroundColor = color
+        let output = viewModel.transform(input: input)
+        
+        output.resultPhoneNumber
+            .sink { [weak self] in
+                self?.phoneNumberField.text = $0 }
+            .store(in: &cancellables)
+        
+        output.resultPassword
+            .sink { [weak self] in
+                self?.passwordField.text = $0 }
+            .store(in: &cancellables)
+        
+        output.isButtonEnabled
+            .sink { [weak self] state in
+                print(state)
+                self?.loginButton.isEnabled = state
+                self?.loginButton.backgroundColor = state ? .doingOwnerBlue : .gray
             }
-            .store(in: &subscriptions)
+            .store(in: &cancellables)
+        
         
         NotificationCenter.default
             .publisher(for: UIApplication.keyboardWillShowNotification)
