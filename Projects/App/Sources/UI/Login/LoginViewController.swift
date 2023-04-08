@@ -9,7 +9,7 @@
 import UIKit
 import Combine
 import DesignSystem
-import SwiftUI
+import Network
 
 final class LoginViewController: UIViewController {
     
@@ -17,7 +17,7 @@ final class LoginViewController: UIViewController {
     private var cancellables = Set<AnyCancellable>()
     private let viewModel = LoginViewModel()
     private var keyboardEndFrameHeight: CGFloat?
-    
+    private let provider = Network.Service.doingProvider
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.clipsToBounds = true
@@ -219,7 +219,17 @@ extension LoginViewController {
         // 기본 틀은 대충 만들었는데 나중에 수정할것 -> ConfirmViewController (Alert으로 할까 생각중)
         print(phoneNumberField.text!)
         print(passwordField.text!)
-        show(TabViewController(), sender: self)
+        provider.request(.login(
+            phoneNumber: phoneNumberField.text!,
+            password: passwordField.text!)) { result in
+                switch result {
+                case .success(let result):
+                    print(result)
+                case .failure(let error):
+                    print(error)
+                }
+            }
+//        show(TabViewController(), sender: self)
 //        let alert = UIAlertController(title: "", message: "전화번호 또는 비밀번호가 일치하지 않습니다.", preferredStyle: .alert)
 //        alert.addAction(UIAlertAction(title: "예", style: .default))
 //        present(alert, animated: true)
@@ -309,7 +319,7 @@ enum DeviceType {
     case iPhone8
     case iPhone12Pro
     case iPhone12ProMax
-
+    
     func name() -> String {
         switch self {
         case .iPhoneSE2:

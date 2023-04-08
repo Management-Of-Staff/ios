@@ -7,12 +7,13 @@
 //
 
 import UIKit
+import DesignSystem
 
 class HireViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .backgroundNeutral
 
     }
 

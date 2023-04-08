@@ -44,7 +44,7 @@ final class TabViewController: UITabBarController {
     
     private func addTopRectangleForSelectedTab() {
         selectedRectangleView.translatesAutoresizingMaskIntoConstraints = false
-        selectedRectangleView.backgroundColor = .doingColor(.mainOwner)
+        selectedRectangleView.backgroundColor = .mainOwner
             
             guard let tabBarView = tabBar.selectedItem?.value(forKey: "view") as? UIView else { return }
             tabBarView.addSubview(selectedRectangleView)

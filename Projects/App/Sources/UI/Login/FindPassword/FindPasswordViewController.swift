@@ -20,7 +20,7 @@ final class FindPasswordViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .doingColor(.backgroundNeutral)
+        view.backgroundColor = .backgroundNeutral
         configureUI()
         createLayout()
         print("여기 Find임")

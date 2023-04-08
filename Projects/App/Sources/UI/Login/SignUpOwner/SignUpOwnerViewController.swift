@@ -20,7 +20,7 @@ final class SignUpOwnerViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .doingColor(.backgroundNeutral)
+        view.backgroundColor = .backgroundNeutral
         configureUI()
         createLayout()
     }
