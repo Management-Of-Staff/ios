@@ -36,7 +36,7 @@ final class LoginViewModel {
         
         let buttonStatePublisher = input.phoneNumber.combineLatest(input.password)
             .map { phoneNumber, password in
-                phoneNumber.count > 12 && password.count > 5
+                phoneNumber.count > 10 && password.count > 5
             }
             .eraseToAnyPublisher()
         
