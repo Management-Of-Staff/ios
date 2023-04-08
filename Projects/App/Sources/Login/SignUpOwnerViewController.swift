@@ -18,7 +18,6 @@ class SignUpOwnerViewController: UIViewController {
         return scrollView
     }()
     
-    
     private let signUpContentsStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -120,7 +119,7 @@ class SignUpOwnerViewController: UIViewController {
     }()
     
     private let passwordTextField: UITextField = {
-        let field = CustomTextFields()
+        let field = UITextField()
         field.placeholder = "비밀번호를 입력해 주세요."
         field.font = .doingFont(size: .button, weight: .regular)
         field.translatesAutoresizingMaskIntoConstraints = false
@@ -228,6 +227,24 @@ class SignUpOwnerViewController: UIViewController {
         return button
     }()
     
+    @objc func ownerNumberButtonAction(sender: UIButton!) {
+        print("버튼이 눌렸습니다")
+        
+        let vc = OwnerNumberPopUpViewController()
+        vc.modalPresentationStyle = .overCurrentContext
+        
+        present(vc, animated: false, completion: nil)
+    }
+
+    
+//
+//    func moreDescriptionButtonTapped(contentView: UIView, profileImage: UIImage, userId: String, feedDescription: String) {
+//        let alert = self.storyboard?.instantiateViewController(withIdentifier: "DimmedViewController") as! DimmedViewController
+//        alert.modalPresentationStyle = .overCurrentContext
+//
+//        present(alert, animated: false, completion: nil)
+//    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .backgroundNeutral
@@ -250,6 +267,8 @@ extension SignUpOwnerViewController {
         passwordView.addSubviews(passwordLabel, passwordTextField, passwordErrorImage, passwordShowImage)
         passwordCheckView.addSubviews(passwordCheckLabel, passwordCheckTextField, passwordCheckShowImage, passwordCheckErrorImage)
         ownerNumberView.addSubviews(ownerNumberLabel, ownerNumberTextField, ownerNumberButton)
+        
+        ownerNumberButton.addTarget(self, action: #selector(ownerNumberButtonAction), for: .touchUpInside)
 
     }
     
@@ -364,48 +383,33 @@ extension SignUpOwnerViewController {
     }
     
 }
-
-
-
-//    private let phoneNumberButton: UIButton = {
-//        let button = UIButton()
-//        button.setTitle("인증요청", for: .normal)
-//        button.backgroundColor = .mainOwner
-//        button.layer.cornerRadius = 4
-//        button.layer.masksToBounds = true
-//        button.titleLabel?.font = .doingFont(size: .button, weight: .bold)
-//        button.setTitleColor(.white, for: .normal)
-//        button.translatesAutoresizingMaskIntoConstraints = false
-//        return button
-//    }()
-
-extension UITextField {
-
-    func useUnderline() {
-        print("underlin 실행")
-        let border = CALayer()
-        let borderWidth = CGFloat(1.0)
-        border.borderColor = UIColor.black.cgColor
-        border.frame = CGRectMake(0, self.frame.size.height - borderWidth, self.frame.size.width, self.frame.size.height)
-        border.borderWidth = borderWidth
-        self.layer.addSublayer(border)
-        self.layer.masksToBounds = true
-    }
-}
-
-class CustomTextFields: UITextField {
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        
-        setupUnderlinedTextField()
-    }
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-    }
-    func setupUnderlinedTextField() {
-        let bottomLayer = CALayer()
-        bottomLayer.frame = CGRect(x: 0, y: self.frame.height, width: self.frame.width - 35, height: 1)
-        bottomLayer.backgroundColor = UIColor.black.cgColor
-        self.layer.addSublayer(bottomLayer)
-    }
-}
+//
+//extension UITextField {
+//    func useUnderline() {
+//        print("underlin 실행")
+//        let border = CALayer()
+//        let borderWidth = CGFloat(1.0)
+//        border.borderColor = UIColor.black.cgColor
+//        border.frame = CGRectMake(0, self.frame.size.height - borderWidth, self.frame.size.width, self.frame.size.height)
+//        border.borderWidth = borderWidth
+//        self.layer.addSublayer(border)
+//        self.layer.masksToBounds = true
+//    }
+//}
+//
+//class CustomTextFields: UITextField {
+//    required init?(coder: NSCoder) {
+//        super.init(coder: coder)
+//
+//        setupUnderlinedTextField()
+//    }
+//    override init(frame: CGRect) {
+//        super.init(frame: frame)
+//    }
+//    func setupUnderlinedTextField() {
+//        let bottomLayer = CALayer()
+//        bottomLayer.frame = CGRect(x: 0, y: self.frame.height, width: self.frame.width - 35, height: 1)
+//        bottomLayer.backgroundColor = UIColor.black.cgColor
+//        self.layer.addSublayer(bottomLayer)
+//    }
+//}
