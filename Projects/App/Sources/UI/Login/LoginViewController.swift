@@ -134,6 +134,7 @@ final class LoginViewController: UIViewController {
         configureUI()
         createLayout()
         hideKeyboardWhenTappedBackground()
+        passwordField.delegate = self
         self.segmentedControl.selectedSegmentIndex = 0
         bind(to: viewModel)
     }
@@ -229,6 +230,7 @@ extension LoginViewController {
                     print(error)
                 }
             }
+        show(TabViewController(), sender: self)
 //        show(TabViewController(), sender: self)
 //        let alert = UIAlertController(title: "", message: "전화번호 또는 비밀번호가 일치하지 않습니다.", preferredStyle: .alert)
 //        alert.addAction(UIAlertAction(title: "예", style: .default))
@@ -298,5 +300,13 @@ extension LoginViewController {
     private enum KeyboardState {
         case show
         case hide
+    }
+}
+
+extension LoginViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        passwordField.resignFirstResponder()
+        self.dismiss(animated: true, completion: nil)
+        return true
     }
 }
