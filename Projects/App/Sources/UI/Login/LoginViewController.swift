@@ -217,24 +217,22 @@ extension LoginViewController {
     @objc
     private func didTapLoginButton() {
         // MARK: 임시 Alert 나중에 커스텀으로 만들어 줘야함.
-        // 기본 틀은 대충 만들었는데 나중에 수정할것 -> ConfirmViewController (Alert으로 할까 생각중)
+        // 기본 틀은 대충 만들었는데 나중에 수정할것 -> ConfirmViewController, Alert 개발 가능. 해당 부분 노션 10번 참조
+        
         print(phoneNumberField.text!)
         print(passwordField.text!)
         provider.request(.login(
             phoneNumber: phoneNumberField.text!,
-            password: passwordField.text!)) { result in
+            password: passwordField.text!)) { [weak self] result in
                 switch result {
                 case .success(let result):
-                    print(result)
+                    self?.show(TabViewController(), sender: self)
+                    print(result) // 일단 결과 출력하게 함. response가 200~299면 네비게이션
+                    // else Alert 띄우고 다시 하게 만들기
                 case .failure(let error):
-                    print(error)
+                    print(error) // 에러
                 }
             }
-        show(TabViewController(), sender: self)
-//        show(TabViewController(), sender: self)
-//        let alert = UIAlertController(title: "", message: "전화번호 또는 비밀번호가 일치하지 않습니다.", preferredStyle: .alert)
-//        alert.addAction(UIAlertAction(title: "예", style: .default))
-//        present(alert, animated: true)
     }
     
     @objc
