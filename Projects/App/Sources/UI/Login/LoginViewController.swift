@@ -30,7 +30,7 @@ final class LoginViewController: UIViewController {
         let imageView = UIImageView()
         // MARK: 디자인 시스템이 있긴한데 현재 작동 안 됨. 원인 파악해야함
         imageView.image = DesignSystemImages.Image(assetName: "img_logo")
-//        imageView.image = UIImage(.imgLogo)
+        //        imageView.image = UIImage(.imgLogo)
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -141,25 +141,13 @@ final class LoginViewController: UIViewController {
     
     // MARK: - Function
     
-    private func remakeConstraintsByKeyboard(_ state: KeyboardState) {
-        guard self.keyboardEndFrameHeight != nil else {
-            return
-        }
-        switch state {
-        case .show:
-            self.view.frame.origin.y = -100
-        case .hide:
-            self.view.frame.origin.y = 0
-        }
-    }
-
     private func bind(to viewModel: LoginViewModel) {
         
         let input = LoginViewModel.Input(
             phoneNumber: phoneNumberField.textPublisher.eraseToAnyPublisher(),
             password: passwordField.textPublisher.eraseToAnyPublisher()
         )
-
+        
         let output = viewModel.transform(input: input)
         
         output.resultPhoneNumber
@@ -173,7 +161,7 @@ final class LoginViewController: UIViewController {
                 self?.loginButton.backgroundColor = state ? .doingColor(.mainOwner) : .gray
             }
             .store(in: &cancellables)
-
+        
         loginButton.addTarget(self, action: #selector(didTapLoginButton), for: .touchUpInside)
         
         findPasswordButton.addTarget(self, action: #selector(didTapFindPasswordButton), for: .touchUpInside)
@@ -201,6 +189,18 @@ final class LoginViewController: UIViewController {
             }
             .store(in: &cancellables)
     }
+    
+    private func remakeConstraintsByKeyboard(_ state: KeyboardState) {
+        guard self.keyboardEndFrameHeight != nil else {
+            return
+        }
+        switch state {
+        case .show:
+            self.view.frame.origin.y = -100
+        case .hide:
+            self.view.frame.origin.y = 0
+        }
+    }
 }
 
 // MARK: - UI Function
@@ -221,16 +221,25 @@ extension LoginViewController {
         
         print(phoneNumberField.text!)
         print(passwordField.text!)
+        
         provider.request(.login(
             phoneNumber: phoneNumberField.text!,
             password: passwordField.text!)) { [weak self] result in
                 switch result {
-                case .success(let result):
-                    self?.show(TabViewController(), sender: self)
-                    print(result) // 일단 결과 출력하게 함. response가 200~299면 네비게이션
-                    // else Alert 띄우고 다시 하게 만들기
+                case .success(let response):
+                    let statusCode = response.statusCode
+                    switch statusCode {
+                    case 200:
+                        print("성공")
+                        self?.show(TabViewController(), sender: self)
+                    case 400...499:
+                        print(result)
+                        // 커스텀 알럿 띄우기
+                    default:
+                        print("Unknown statusCode: \(statusCode)")
+                    }
                 case .failure(let error):
-                    print(error) // 에러
+                    print(error)
                 }
             }
     }
