@@ -1,5 +1,5 @@
 //
-//  HireViewController.swift
+//  PaidViewControlller.swift
 //  App
 //
 //  Created by Taehwan Kim on 2023/04/05.
@@ -9,12 +9,12 @@
 import UIKit
 import DesignSystem
 
-class HireViewController: UIViewController {
+final class StaffPaidViewControlller: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .backgroundNeutral
 
     }
-
+    
 }

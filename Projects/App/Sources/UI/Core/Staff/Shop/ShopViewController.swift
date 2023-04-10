@@ -9,7 +9,7 @@
 import UIKit
 import DesignSystem
 
-class ShopViewController: UIViewController {
+final class StaffShopViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -1,5 +1,5 @@
 //
-//  HomeViewController.swift
+//  MyInfoViewController.swift
 //  App
 //
 //  Created by Taehwan Kim on 2023/04/05.
@@ -9,11 +9,12 @@
 import UIKit
 import DesignSystem
 
-class HomeViewController: UIViewController {
+final class StaffMyInfoViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .backgroundNeutral
+
     }
 
 }

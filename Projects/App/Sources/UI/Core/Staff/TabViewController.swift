@@ -9,7 +9,7 @@
 import UIKit
 import DesignSystem
 
-final class TabViewController: UITabBarController {
+final class StaffTabViewController: UITabBarController {
     private var selectedRectangleView = UIView()
     
     override func viewDidLoad() {
@@ -21,11 +21,11 @@ final class TabViewController: UITabBarController {
     }
     
     private func setupTabs() {
-        let homeVC = HomeViewController()
-        let shopVC = ShopViewController()
-        let paidVC = PaidViewControlller()
+        let homeVC = StaffHomeViewController()
+        let shopVC = StaffShopViewController()
+        let paidVC = StaffPaidViewControlller()
         let hireVC = HireViewController()
-        let myInfoVC = MyInfoViewController()
+        let myInfoVC = StaffMyInfoViewController()
         
         let nav1 = UINavigationController(rootViewController: homeVC)
         let nav2 = UINavigationController(rootViewController: shopVC)
@@ -58,7 +58,7 @@ final class TabViewController: UITabBarController {
     }
 }
 
-extension TabViewController: UITabBarControllerDelegate {
+extension StaffTabViewController: UITabBarControllerDelegate {
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
         guard let tabBarView = tabBar.selectedItem?.value(forKey: "view") as? UIView else { return }
         

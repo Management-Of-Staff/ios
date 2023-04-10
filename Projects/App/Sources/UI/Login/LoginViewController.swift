@@ -231,7 +231,8 @@ extension LoginViewController {
                     switch statusCode {
                     case 200:
                         print("성공")
-                        self?.show(TabViewController(), sender: self)
+                        // segment status에 따라 가야하는 TabView 바꾸기
+                        self?.show(StaffTabViewController(), sender: self)
                     case 400...499:
                         print(result)
                         // 커스텀 알럿 띄우기
