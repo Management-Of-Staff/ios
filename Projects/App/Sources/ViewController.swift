@@ -12,5 +12,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .yellow
+        navigationController?.setNavigationBarHidden(false, animated: true)
+
     }
 }
