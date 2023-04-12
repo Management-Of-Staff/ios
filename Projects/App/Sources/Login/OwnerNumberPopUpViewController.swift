@@ -24,7 +24,7 @@ class OwnerNumberPopUpViewController: UIViewController {
         return view
     }()
     
-    private let contentLabel: UILabel = {
+    let contentLabel: UILabel = {
         let label = UILabel()
         label.text = "올바른 사업자 정보입니다."
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -49,6 +49,11 @@ class OwnerNumberPopUpViewController: UIViewController {
         createLayout()
         view.backgroundColor = UIColor(rgb: 0xE6E6E6) // 임시 색 수정해야함
     }
+    
+    @objc func dismissButtonAction(sender: UIButton!) {
+        print("버튼이 눌렸습니다")
+        dismiss(animated: false)
+    }
 }
 
 extension OwnerNumberPopUpViewController {
@@ -57,6 +62,7 @@ extension OwnerNumberPopUpViewController {
         view.addSubview(backgroundView)
         backgroundView.addSubview(contentView)
         contentView.addSubviews(contentLabel, contentButton)
+        contentButton.addTarget(self, action: #selector(dismissButtonAction), for: .touchUpInside)
     }
     
     private func createLayout() {
