@@ -16,5 +16,5 @@ final class StaffPaidViewControlller: UIViewController {
         view.backgroundColor = .backgroundNeutral
 
     }
-    
+
 }

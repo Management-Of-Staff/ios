@@ -30,4 +30,8 @@ public extension UIColor {
     static let black4 = doingColor(.black4)
     
     static let disabledText = doingColor(.disabledText)
+    
+    static let mainStaff = doingColor(.mainStaff)
+    static let sec1 = doingColor(.sec1)
+    static let sec2 = doingColor(.sec2)
 }
