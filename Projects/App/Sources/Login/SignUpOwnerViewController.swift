@@ -9,7 +9,6 @@
 import UIKit
 import Combine
 
-// 글자 수 20자 제한
 // 텍스트 필드 밑줄 생성
 // 레이아웃 조정
 // 색 조정
@@ -19,92 +18,8 @@ class SignUpOwnerViewController: UIViewController {
     
     private var cancellables = Set<AnyCancellable>()
     private let viewModel = MainViewModel()
+    var ownerNumberState: Bool = false
     
-    private func bind(to viewModel: MainViewModel) {
-        
-        let input = MainViewModel.Input(
-            userName: nameTextField.textPublisher.eraseToAnyPublisher(),
-//            ownerNumber: ownerNumberTextField.textPublisher.eraseToAnyPublisher(),
-            password: passwordTextField.textPublisher.eraseToAnyPublisher(),
-            passwordAgaing: passwordCheckTextField.textPublisher.eraseToAnyPublisher()
-        )
-
-        let output = viewModel.transform(input: input)
-        
-//        output
-//            .ownerNumberIsValid
-//            .sink { [weak self] state in
-//                if state == true {
-//                    print("사업자 등록 번호 유효")
-//                } else {
-//                    print("없는 사업자 번호")
-//                }
-//            }
-//            .store(in: &cancellables)
-        
-        output
-            .passwordIsValid
-            .sink { [weak self] state in
-                if state == true {
-                    self?.passwordAlertLabel.text = "비밀번호가 일치합니다"
-                    self?.passwordAlertLabel.textColor = .green
-                    self?.passwordAlertImage.image = UIImage(systemName: "checkmark.circle.fill")
-                    self?.passwordAlertImage.tintColor = .green
-                } else {
-                    self?.passwordAlertLabel.text = "비밀번호가 일치하지 않습니다"
-                    self?.passwordAlertLabel.textColor = .red
-                    self?.passwordAlertImage.image = UIImage(systemName: "exclamationmark.circle.fill")
-                    self?.passwordAlertImage.tintColor = .red
-                }
-                
-            }
-            .store(in: &cancellables)
-        
-        output
-            .passwordCount
-            .sink { [weak self] in
-                self?.passwordCountLabel.text = "\(String($0.count)) / 20" }
-            .store(in: &cancellables)
-        
-        output
-            .passwordCheckIsValid
-            .sink { [weak self] state in
-                if state == true {
-                    self?.passwordCheckAlertLabel.text = "비밀번호가 일치합니다"
-                    self?.passwordCheckAlertLabel.textColor = .green
-                    self?.passwordCheckAlertImage.image = UIImage(systemName: "checkmark.circle.fill")
-                    self?.passwordCheckAlertImage.tintColor = .green
-                } else {
-                    self?.passwordCheckAlertLabel.text = "비밀번호가 일치하지 않습니다"
-                    self?.passwordCheckAlertLabel.textColor = .red
-                    self?.passwordCheckAlertImage.image = UIImage(systemName: "exclamationmark.circle.fill")
-                    self?.passwordCheckAlertImage.tintColor = .red
-                }
-                
-            }
-            .store(in: &cancellables)
-        
-        
-//            .sink { [weak self] in
-//                self?.passwordCheckAlertLabel.text = $0 }
-//            .store(in: &cancellables)
-        
-        output
-            .passwordCheckCount
-            .sink { [weak self] in
-                self?.passwordCheckCountLabel.text = "\(String($0.count)) / 20" }
-            .store(in: &cancellables)
-
-        output
-            .buttonIsValid
-            .sink(receiveValue: { [weak self] state in
-                print(state)
-                self?.completeButton.isEnabled = state
-                self?.completeButton.backgroundColor = state ? .systemOrange : .systemGray
-            })
-            .store(in: &cancellables)
-        
-    }
     
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -117,6 +32,24 @@ class SignUpOwnerViewController: UIViewController {
     private let signUpContentsStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
+        stackView.alignment = .fill
+        stackView.distribution = .equalSpacing
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
+    private let passwordAlertStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.alignment = .fill
+        stackView.distribution = .equalSpacing
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
+    private let passwordCheckAlertStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
         stackView.alignment = .fill
         stackView.distribution = .equalSpacing
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -170,7 +103,12 @@ class SignUpOwnerViewController: UIViewController {
     private let ownerNumberTextField: UITextField = {
         let field = UITextField()
         field.placeholder = "사업자 등록 번호를 입력해 주세요."
+        field.autocapitalizationType = .none
+        field.autocorrectionType = .no
+        field.keyboardType = .numberPad
+        field.returnKeyType = .continue
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 0))
+        field.leftViewMode = .always
         field.font = .doingFont(size: .button, weight: .regular)
         field.borderStyle = .none
         field.translatesAutoresizingMaskIntoConstraints = false
@@ -180,7 +118,7 @@ class SignUpOwnerViewController: UIViewController {
     private let ownerNumberButton: UIButton = {
         let button = UIButton()
         button.setTitle("조회", for: .normal)
-        button.backgroundColor = .mainOwner
+        button.backgroundColor = .systemGray
         button.layer.cornerRadius = 4
         button.layer.masksToBounds = true
         button.titleLabel?.font = .doingFont(size: .button, weight: .bold)
@@ -207,6 +145,7 @@ class SignUpOwnerViewController: UIViewController {
     
     private let passwordAlertImage: UIImageView = {
         let imageView = UIImageView()
+        imageView.isHidden = true
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -224,27 +163,33 @@ class SignUpOwnerViewController: UIViewController {
     private let passwordTextField: UITextField = {
         let field = UITextField()
         field.placeholder = "비밀번호를 입력해 주세요."
+        field.borderStyle = .line
+        field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 0))
+        field.leftViewMode = .always
         field.font = .doingFont(size: .button, weight: .regular)
+        field.isSecureTextEntry = true
         field.translatesAutoresizingMaskIntoConstraints = false
         return field
     }()
     
-    private let passwordShowImage: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "eye.fill")
-        imageView.tintColor = .black1
-        imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
+    private let passwordShowButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "eye.slash.fill"), for: .normal)
+        button.isHidden = true
+        button.tintColor = .black1
+        button.contentMode = .scaleAspectFit
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     
-    private let passwordErrorImage: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "x.circle")
-        imageView.tintColor = .black1
-        imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
+    private let passwordDeleteButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "x.circle"), for: .normal)
+        button.isHidden = true
+        button.tintColor = .black1
+        button.contentMode = .scaleAspectFit
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     
     private let passwordCheckView: UIView = {
@@ -256,6 +201,7 @@ class SignUpOwnerViewController: UIViewController {
     
     private let passwordCheckAlertImage: UIImageView = {
         let imageView = UIImageView()
+        imageView.isHidden = true
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -300,29 +246,33 @@ class SignUpOwnerViewController: UIViewController {
     private let passwordCheckTextField: UITextField = {
         let field = UITextField()
         field.placeholder = "비밀번호를 입력해 주세요."
+        field.borderStyle = .line
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 0))
+        field.leftViewMode = .always
+        field.isSecureTextEntry = true
         field.font = .doingFont(size: .button, weight: .regular)
-        field.borderStyle = .none
         field.translatesAutoresizingMaskIntoConstraints = false
         return field
     }()
     
-    private let passwordCheckShowImage: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "eye.fill")
-        imageView.tintColor = .black1
-        imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
+    private let passwordCheckShowButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "eye.slash.fill"), for: .normal)
+        button.isHidden = true
+        button.tintColor = .black1
+        button.contentMode = .scaleAspectFit
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     
-    private let passwordCheckErrorImage: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "x.circle")
-        imageView.tintColor = .black1
-        imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
+    private let passwordCheckDeleteButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "x.circle"), for: .normal)
+        button.isHidden = true
+        button.tintColor = .black1
+        button.contentMode = .scaleAspectFit
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     
     private let completeButton: UIButton = {
@@ -332,11 +282,138 @@ class SignUpOwnerViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 6
         button.layer.masksToBounds = true
-//        button.isEnabled = false
+        button.isEnabled = false
         button.titleLabel?.font = .doingFont(size: .button, weight: .bold)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
+}
+
+extension SignUpOwnerViewController {
+    private func bind(to viewModel: MainViewModel) {
+        
+        let input = MainViewModel.Input(
+            userName: nameTextField.textPublisher.eraseToAnyPublisher(),
+            ownerNumber: ownerNumberTextField.textPublisher.eraseToAnyPublisher(),
+            password: passwordTextField.textPublisher.eraseToAnyPublisher(),
+            passwordCheck: passwordCheckTextField.textPublisher.eraseToAnyPublisher()
+        )
+
+        let output = viewModel.transform(input: input)
+        
+        output
+            .ownerNumberLimit
+            .sink { [weak self] in
+                self?.ownerNumberTextField.text = $0
+                if self?.ownerNumberTextField.text?.count == 10 {
+                    self?.ownerNumberButton.backgroundColor = .mainOwner
+                    self?.ownerNumberButton.isEnabled = true
+                    print("클릭됨")
+                } else {
+                    self?.ownerNumberButton.backgroundColor = .disabledText // 수정 필요
+                    self?.ownerNumberButton.isEnabled = false
+                }
+            }
+            .store(in: &cancellables)
+        
+        output
+            .passwordLimit
+            .sink { [weak self] in
+                self?.passwordTextField.text = $0 }
+            .store(in: &cancellables)
+        
+        output
+            .passwordCheckLimit
+            .sink { [weak self] in
+                self?.passwordCheckTextField.text = $0 }
+            .store(in: &cancellables)
+        
+        output
+            .passwordIsValid
+            .sink { [weak self] state in
+                if state == true {
+                    self?.passwordAlertLabel.text = "비밀번호가 일치합니다"
+                    self?.passwordAlertLabel.textColor = .green
+                    self?.passwordAlertImage.image = UIImage(systemName: "checkmark.circle.fill")
+                    self?.passwordAlertImage.tintColor = .green
+                } else {
+                    self?.passwordAlertLabel.text = "비밀번호가 일치하지 않습니다"
+                    self?.passwordAlertLabel.textColor = .red
+                    self?.passwordAlertImage.image = UIImage(systemName: "exclamationmark.circle.fill")
+                    self?.passwordAlertImage.tintColor = .red
+                }
+                
+            }
+            .store(in: &cancellables)
+        
+        output
+            .passwordCount
+            .sink { [weak self] in
+                self?.passwordCountLabel.text = "\(String($0.count)) / 20"
+                if $0.count != 0 {
+                    self?.passwordDeleteButton.isHidden = false
+                    self?.passwordShowButton.isHidden = false
+                    self?.passwordAlertImage.isHidden = false
+                } else {
+                    self?.passwordDeleteButton.isHidden = true
+                    self?.passwordShowButton.isHidden = true
+                    self?.passwordAlertLabel.text = "영문, 숫자 포함 8자리 이상"
+                    self?.passwordAlertLabel.textColor = .disabledText
+                    self?.passwordAlertImage.isHidden = true
+                }
+            }
+            .store(in: &cancellables)
+        
+        output
+            .passwordCheckIsValid
+            .sink { [weak self] state in
+                print("현재 \(state)")
+                if state == true {
+                    self?.passwordCheckAlertLabel.text = "비밀번호가 일치합니다"
+                    self?.passwordCheckAlertLabel.textColor = .green
+                    self?.passwordCheckAlertImage.image = UIImage(systemName: "checkmark.circle.fill")
+                    self?.passwordCheckAlertImage.tintColor = .green
+                } else {
+                    self?.passwordCheckAlertLabel.text = "비밀번호가 일치하지 않습니다"
+                    self?.passwordCheckAlertLabel.textColor = .red
+                    self?.passwordCheckAlertImage.image = UIImage(systemName: "exclamationmark.circle.fill")
+                    self?.passwordCheckAlertImage.tintColor = .red
+                }
+                
+            }
+            .store(in: &cancellables)
+        
+        output
+            .passwordCheckCount
+            .sink { [weak self] in
+                self?.passwordCheckCountLabel.text = "\(String($0.count)) / 20"
+                if $0.count != 0 {
+                    self?.passwordCheckDeleteButton.isHidden = false
+                    self?.passwordCheckShowButton.isHidden = false
+                    self?.passwordCheckAlertImage.isHidden = false
+                } else {
+                    self?.passwordCheckDeleteButton.isHidden = true
+                    self?.passwordCheckShowButton.isHidden = true
+                    self?.passwordCheckAlertLabel.text = "영문, 숫자 포함 8자리 이상"
+                    self?.passwordCheckAlertLabel.textColor = .disabledText
+                    self?.passwordCheckAlertImage.isHidden = true
+                }
+            }
+            .store(in: &cancellables)
+
+        output
+            .buttonIsValid
+            .sink(receiveValue: { [weak self] state in
+                print(state)
+                self?.completeButton.isEnabled = state
+                self?.completeButton.backgroundColor = state ? .mainOwner : .systemGray
+            })
+            .store(in: &cancellables)
+        
+    }
+}
+
+extension SignUpOwnerViewController {
     
     @objc func ownerNumberButtonAction(sender: UIButton!) {
         print("버튼이 눌렸습니다")
@@ -344,14 +421,41 @@ class SignUpOwnerViewController: UIViewController {
         
         if ownerNumberIsValid(ownerNumber: ownerNumberTextField.text ?? "") {
             vc.contentLabel.text = "올바른 사업자 정보입니다."
+//            self.ownerNumberState = true
         } else {
             vc.contentLabel.text = "사업자 정보를 찾을 수 없습니다."
+//            self.ownerNumberState = false
         }
         vc.modalPresentationStyle = .overCurrentContext
         
         present(vc, animated: false, completion: nil)
     }
     
+    @objc func showPasswordButtonAction(sender: UIButton!) {
+        passwordTextField.isSecureTextEntry.toggle()
+        passwordTextField.isSecureTextEntry ? passwordShowButton.setImage(UIImage(systemName: "eye.slash.fill"), for: .normal) : passwordShowButton.setImage(UIImage(systemName: "eye.fill"), for: .normal)
+        print("비밀번호 보여주기")
+    }
+    
+    @objc func deletePasswordButtonAction(sender: UIButton!) {
+        viewModel
+        passwordTextField.text = ""
+        print("비밀번호 전체 삭제하기")
+    }
+    
+    @objc func showPasswordCheckButtonAction(sender: UIButton!) {
+        passwordCheckTextField.isSecureTextEntry.toggle()
+        print("비밀번호 보여주기")
+    }
+    
+    @objc func deletePasswordCheckButtonAction(sender: UIButton!) {
+        passwordCheckTextField.text = ""
+        print("비밀번호 전체 삭제하기")
+    }
+    
+    @objc func completeButtonAction(sender: UIButton!) {
+        print("회원가입을 완료했습니다")
+    }
     // 사업자 검증 함수
     func ownerNumberIsValid(ownerNumber: String) -> Bool {
         let veriNum: String = "137137135"           // 검증 대응숫자
@@ -428,14 +532,22 @@ extension SignUpOwnerViewController {
     
     private func configureUI() {
         view.addSubview(scrollView)
-        scrollView.addSubviews(signUpContentsStackView, passwordAlertLabel, passwordAlertImage, passwordCheckAlertLabel, passwordCheckAlertImage, passwordCountLabel, passwordCheckCountLabel, completeButton)
+        scrollView.addSubviews(signUpContentsStackView, passwordAlertStackView, passwordCheckAlertStackView, passwordCountLabel, passwordCheckCountLabel, completeButton)
         signUpContentsStackView.addArrangedSubviews(nameView, ownerNumberView, passwordView, passwordCheckView)
         nameView.addSubviews(nameLabel, nameTextField)
-        passwordView.addSubviews(passwordLabel, passwordTextField, passwordErrorImage, passwordShowImage)
-        passwordCheckView.addSubviews(passwordCheckLabel, passwordCheckTextField, passwordCheckShowImage, passwordCheckErrorImage)
+        passwordView.addSubviews(passwordLabel, passwordTextField, passwordDeleteButton, passwordShowButton)
+        passwordAlertStackView.addArrangedSubviews(passwordAlertImage, passwordAlertLabel)
+        passwordCheckAlertStackView.addArrangedSubviews(passwordCheckAlertImage, passwordCheckAlertLabel)
+        passwordCheckView.addSubviews(passwordCheckLabel, passwordCheckTextField, passwordCheckShowButton, passwordCheckDeleteButton)
         ownerNumberView.addSubviews(ownerNumberLabel, ownerNumberTextField, ownerNumberButton)
         
         ownerNumberButton.addTarget(self, action: #selector(ownerNumberButtonAction), for: .touchUpInside)
+        
+        passwordShowButton.addTarget(self, action: #selector(showPasswordButtonAction), for: .touchUpInside)
+        passwordDeleteButton.addTarget(self, action: #selector(deletePasswordButtonAction), for: .touchUpInside)
+        passwordCheckShowButton.addTarget(self, action: #selector(showPasswordCheckButtonAction), for: .touchUpInside)
+        passwordCheckDeleteButton.addTarget(self, action: #selector(deletePasswordCheckButtonAction), for: .touchUpInside)
+        completeButton.addTarget(self, action: #selector(completeButtonAction), for: .touchUpInside)
 
     }
     
@@ -449,6 +561,7 @@ extension SignUpOwnerViewController {
         let buttonWidth: CGFloat = 99/375
         let buttonHeight: CGFloat = 31/812
         let completeButtonHeight: CGFloat = 52/812
+        let alertStackHeight: CGFloat = 23/812
         
         let phoneCertificationStackHeight: CGFloat = 210/812
         
@@ -499,30 +612,42 @@ extension SignUpOwnerViewController {
             passwordTextField.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: textFieldHeight),
             passwordTextField.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: stackWidth),
             
-            passwordErrorImage.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 40/812),
-            passwordErrorImage.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 40/812),
-            passwordErrorImage.centerYAnchor.constraint(equalTo: passwordTextField.centerYAnchor),
-            passwordErrorImage.trailingAnchor.constraint(equalTo: passwordShowImage.leadingAnchor, constant: -8),
+            passwordDeleteButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 40/812),
+            passwordDeleteButton.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 40/812),
+            passwordDeleteButton.centerYAnchor.constraint(equalTo: passwordTextField.centerYAnchor),
+            passwordDeleteButton.trailingAnchor.constraint(equalTo: passwordShowButton.leadingAnchor, constant: -8),
             
-            passwordShowImage.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 40/812),
-            passwordShowImage.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 40/812),
-            passwordShowImage.centerYAnchor.constraint(equalTo: passwordTextField.centerYAnchor),
-            passwordShowImage.trailingAnchor.constraint(equalTo: passwordTextField.trailingAnchor, constant: 0),
+            passwordShowButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 40/812),
+            passwordShowButton.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 40/812),
+            passwordShowButton.centerYAnchor.constraint(equalTo: passwordTextField.centerYAnchor),
+            passwordShowButton.trailingAnchor.constraint(equalTo: passwordTextField.trailingAnchor, constant: 0),
             
-            passwordAlertImage.topAnchor.constraint(equalTo: passwordView.bottomAnchor),
-            passwordAlertImage.leadingAnchor.constraint(equalTo: passwordView.leadingAnchor),
-            
-            passwordAlertLabel.topAnchor.constraint(equalTo: passwordView.bottomAnchor),
+            passwordAlertStackView.leadingAnchor.constraint(equalTo: passwordView.leadingAnchor, constant: 15),
+            passwordAlertStackView.topAnchor.constraint(equalTo: passwordView.bottomAnchor),
+            passwordAlertStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: alertStackHeight),
+            passwordAlertStackView.widthAnchor.constraint(equalTo: passwordView.widthAnchor),
+
             passwordAlertLabel.leadingAnchor.constraint(equalTo: passwordAlertImage.trailingAnchor),
+
+            passwordAlertImage.leadingAnchor.constraint(equalTo: passwordAlertStackView.leadingAnchor),
+            passwordAlertImage.widthAnchor.constraint(equalToConstant: 14),
+            passwordAlertImage.heightAnchor.constraint(equalToConstant: 14),
+            
+            
+            passwordCheckAlertStackView.leadingAnchor.constraint(equalTo: passwordCheckView.leadingAnchor, constant: 15),
+            passwordCheckAlertStackView.topAnchor.constraint(equalTo: passwordCheckView.bottomAnchor),
+            passwordCheckAlertStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: alertStackHeight),
+            passwordCheckAlertStackView.widthAnchor.constraint(equalTo: passwordCheckView.widthAnchor),
+
+            passwordCheckAlertLabel.leadingAnchor.constraint(equalTo: passwordCheckAlertImage.trailingAnchor),
+
+            passwordCheckAlertImage.leadingAnchor.constraint(equalTo: passwordCheckAlertStackView.leadingAnchor),
+            passwordCheckAlertImage.widthAnchor.constraint(equalToConstant: 14),
+            passwordCheckAlertImage.heightAnchor.constraint(equalToConstant: 14),
+            
             
             passwordCountLabel.topAnchor.constraint(equalTo: passwordView.bottomAnchor),
             passwordCountLabel.trailingAnchor.constraint(equalTo: passwordView.trailingAnchor),
-            
-            passwordCheckAlertImage.topAnchor.constraint(equalTo: passwordCheckView.bottomAnchor),
-            passwordCheckAlertImage.leadingAnchor.constraint(equalTo: passwordCheckView.leadingAnchor),
-            
-            passwordCheckAlertLabel.topAnchor.constraint(equalTo: passwordCheckView.bottomAnchor),
-            passwordCheckAlertLabel.leadingAnchor.constraint(equalTo: passwordCheckAlertImage.trailingAnchor),
             
             passwordCheckCountLabel.topAnchor.constraint(equalTo: passwordCheckView.bottomAnchor),
             passwordCheckCountLabel.trailingAnchor.constraint(equalTo: passwordCheckView.trailingAnchor),
@@ -537,15 +662,15 @@ extension SignUpOwnerViewController {
             passwordCheckTextField.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: textFieldHeight),
             passwordCheckTextField.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: stackWidth),
             
-            passwordCheckErrorImage.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 40/812),
-            passwordCheckErrorImage.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 40/812),
-            passwordCheckErrorImage.centerYAnchor.constraint(equalTo: passwordCheckTextField.centerYAnchor),
-            passwordCheckErrorImage.trailingAnchor.constraint(equalTo: passwordCheckShowImage.leadingAnchor, constant: -8),
+            passwordCheckDeleteButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 40/812),
+            passwordCheckDeleteButton.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 40/812),
+            passwordCheckDeleteButton.centerYAnchor.constraint(equalTo: passwordCheckTextField.centerYAnchor),
+            passwordCheckDeleteButton.trailingAnchor.constraint(equalTo: passwordCheckShowButton.leadingAnchor, constant: -8),
             
-            passwordCheckShowImage.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 40/812),
-            passwordCheckShowImage.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 40/812),
-            passwordCheckShowImage.centerYAnchor.constraint(equalTo: passwordCheckTextField.centerYAnchor),
-            passwordCheckShowImage.trailingAnchor.constraint(equalTo: passwordCheckTextField.trailingAnchor, constant: 0),
+            passwordCheckShowButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 40/812),
+            passwordCheckShowButton.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 40/812),
+            passwordCheckShowButton.centerYAnchor.constraint(equalTo: passwordCheckTextField.centerYAnchor),
+            passwordCheckShowButton.trailingAnchor.constraint(equalTo: passwordCheckTextField.trailingAnchor, constant: 0),
             
             completeButton.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: completeButtonHeight),
             completeButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: stackWidth),
@@ -557,141 +682,6 @@ extension SignUpOwnerViewController {
     
 }
 
-// var regExpPw = /(?=.*\d{1,50})(?=.*[~`!@#$%\^&*()-+=]{1,50})(?=.*[a-zA-Z]{2,50}).{8,50}$/;
-
-// 모든 ViewModel이 채택할 protocol입니다
-
-// 저는 모든 이벤트를 Input과 Ouput으로 구분지을꺼에요
-
-// 예를들어 UserAction들은 다 Input에 속할꺼고, 그걸로 인해서 일어나야하는 결과 (button이 바뀐다던가..) 는 다 Output에 속하겠죠?
-
-protocol ViewModelType {
-    associatedtype Input
-    associatedtype Output
-
-    func transform(input: Input) -> Output
-}
-
-final class MainViewModel: ViewModelType {
-    struct Input { // textField.text를 방출하는 publisher들
-        let userName: AnyPublisher<String, Never>
-//        let ownerNumber: AnyPublisher<String, Never>
-        let password: AnyPublisher<String, Never>
-        let passwordAgaing: AnyPublisher<String, Never>
-    }
-    
-    struct Output { // input들을 CombineLatest로 조합한 후, map을 통해서 유효한지 아닌지를 나타내는 Bool값으로 방출할 publisher
-//        let ownerNumberIsValid: AnyPublisher<Bool, Never>
-        let passwordIsValid: AnyPublisher<Bool, Never>
-        let passwordCheckIsValid: AnyPublisher<Bool, Never>
-        let buttonIsValid: AnyPublisher<Bool, Never>
-        let passwordCount: AnyPublisher<String, Never>
-        let passwordCheckCount: AnyPublisher<String, Never>
-//        let testIsValid: AnyPublisher<Bool, Never>
-    }
-    
-    func transform(input: Input) -> Output {
-        // 이거 수정해야함
-//        let ownerNumberButtonStatePublisher = input.ownerNumber
-//            .map { ownerNumber in
-//                let veriNum: String = "137137135"// 검증 대응숫자
-//                var checkSum: Int = 0 // 검증 번호
-//
-//                var bizNumArr: [Int] = []
-//                for char in ownerNumber {
-//                    bizNumArr.append(Int(String(char)) ?? 0)
-//                }
-//
-//                var veriNumArr: [Int] = []
-//                for char in ownerNumber {
-//                    veriNumArr.append(Int(String(char)) ?? 0)
-//                }
-//
-//                // 1. 검증 대응숫자 기준으로 두 값을 곱하여 1의 자리 숫자를 추출
-//                var addValueArr: [Int] = []
-//                var sum: Int = 0;
-//                for num in 0...veriNumArr.count-1 {
-//                    var tmp = bizNumArr[num] * veriNumArr[num]
-//
-//                    // 1~8 자리의 곱이 10 이상일 경우는 1자리의 숫자만 사용한다.
-//                    if num < veriNumArr.count-1 {
-//                        if tmp > 10 {
-//                            tmp = tmp%10
-//                        }
-//                        sum += tmp
-//                    }
-//                    addValueArr.append(tmp)
-//                    //print(tmp)
-//                }
-//
-//                // 2. 마지막 9번번째 자리의 경우 10 이상일 경우 십의 자리와 일의 자리를 따로 숫자로 떼어서 합한다.
-//                if addValueArr[addValueArr.count-1] >= 10 {
-//                    var lastNumStr = String(addValueArr[addValueArr.count-1])
-//                    var lastNumArr: [Int] = []
-//                    for char in lastNumStr {
-//                        lastNumArr.append(Int(String(char)) ?? 0)
-//                    }
-//                    sum += lastNumArr[0]
-//                    sum += lastNumArr[1]
-//                }
-//                else {
-//                    sum += addValueArr[addValueArr.count-1]
-//                }
-//
-//                // 3. 검증 숫자 검출
-//                checkSum = 10 - sum%10
-//                if checkSum==10 {checkSum=0}
-//
-//                // 4. 검증
-//                if checkSum == bizNumArr[bizNumArr.count-1] {
-//                    return true // 검증 성공
-//                }
-//                else {
-//                    return false // 검증 실패
-//                }
-//            }
-//            .eraseToAnyPublisher()
-        
-        let passwordNumber = input.password
-            .map { password in
-                let idPattern = #"^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,15}$"#
-                let isVaildPattern = (password.range(of: idPattern, options: .regularExpression) != nil)
-                return isVaildPattern
-            }
-            .eraseToAnyPublisher()
-        
-        let passwordCheckNumber = input.passwordAgaing.combineLatest(input.password)
-            .map { password, passwordAgaging in
-                password == passwordAgaging
-            }
-            .eraseToAnyPublisher()
-        
-        let passwordCount = input.password
-            .map { text -> String in
-                let filteredText = text
-                return filteredText
-            }
-            .eraseToAnyPublisher()
-        
-        let passwordCheckCount = input.passwordAgaing
-            .map { text -> String in
-                let filteredText = text
-                return filteredText
-            }
-            .eraseToAnyPublisher()
-        
-        let buttonStatePublisher = input.userName.combineLatest(input.password, input.passwordAgaing)
-            .map { user, password, passwordAgaing in
-                user.count >= 4 &&
-                password.count >= 6 &&
-                password == passwordAgaing
-            }
-            .eraseToAnyPublisher()
-        
-        return Output(passwordIsValid: passwordNumber, passwordCheckIsValid: passwordCheckNumber, buttonIsValid: buttonStatePublisher, passwordCount: passwordCount, passwordCheckCount: passwordCheckCount)
-    }
-}
-
 extension UITextField {
     var textPublisher: AnyPublisher<String, Never> {
         NotificationCenter.default.publisher(for: UITextField.textDidChangeNotification, object: self)
@@ -700,4 +690,3 @@ extension UITextField {
             .eraseToAnyPublisher()
     }
 }
-
