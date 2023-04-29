@@ -12,11 +12,19 @@ class PrivacyAgreeViewController: UIViewController {
 
     var termNumber: Int?
     
+    init(termNumber: Int? = nil) {
+        self.termNumber = termNumber
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     private let termsTitle: UILabel = {
         let label = UILabel()
         label.text = "'두잉' 이용약관"
-//        label.font = .doingFont(size: .subtitle, weight: .bold)
-        label.font = .boldSystemFont(ofSize: 15) // 위에 걸로 대체
+        label.font = .doingFont(size: .subtitle, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -32,16 +40,14 @@ class PrivacyAgreeViewController: UIViewController {
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.clipsToBounds = true
-//        scrollView.backgroundColor = .backgroundNeutral
-        scrollView.backgroundColor = .gray
+        scrollView.backgroundColor = .backgroundNeutral
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
     
     private let privacyAgreeDetailView: UIView = {
         let view = UIView()
-//        view.backgroundColor = .backgroundNeutral
-        view.backgroundColor = .gray
+        view.backgroundColor = .backgroundNeutral
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -58,8 +64,7 @@ class PrivacyAgreeViewController: UIViewController {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.rowHeight = UITableView.automaticDimension
-//        tableView.backgroundColor = .backgroundNeutral
-        tableView.backgroundColor = .gray
+        tableView.backgroundColor = .backgroundNeutral
         tableView.estimatedRowHeight = 100
         tableView.register(DynamicHeightTableViewCell.self,
                            forCellReuseIdentifier: DynamicHeightTableViewCell.reuseIdentifier)
@@ -68,8 +73,8 @@ class PrivacyAgreeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        view.backgroundColor = .backgroundNeutral
-        view.backgroundColor = .gray
+        print("현재 페이지: \(termNumber)")
+        view.backgroundColor = .backgroundNeutral
         configureUI()
         createLayout()
     }
@@ -80,9 +85,6 @@ class PrivacyAgreeViewController: UIViewController {
     }
     @objc func allAgreeAction(sender: UIButton!) {
         print("확인하고 전체동의 눌림")
-//        allAgree = true
-//        self.delegate?.protocolData()
-        print("다음")
         dismiss(animated: true, completion: nil)
     }
 }
@@ -141,8 +143,7 @@ extension PrivacyAgreeViewController {
 
 extension PrivacyAgreeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: DynamicHeightTableViewCell.reuseIdentifier,
-                                                 for: indexPath) as? DynamicHeightTableViewCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: DynamicHeightTableViewCell.reuseIdentifier, for: indexPath) as? DynamicHeightTableViewCell
         else {
             return UITableViewCell()
         }
@@ -155,8 +156,7 @@ extension PrivacyAgreeViewController: UITableViewDelegate, UITableViewDataSource
             dataObject = TermsContentDataSet.data2[indexPath.row]
         }
         cell.configureCell(with: dataObject.title, subtitle: dataObject.subtitle)
-//        cell.backgroundColor = .backgroundNeutral
-        cell.backgroundColor = .gray
+        cell.backgroundColor = .backgroundNeutral
         cell.selectionStyle = .none
         return cell
     }
@@ -213,8 +213,7 @@ class DynamicHeightTableViewCell: UITableViewCell {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-//        label.font = .doingFont(size: .body, weight: .medium)
-        label.font = .boldSystemFont(ofSize: 15)
+        label.font = .doingFont(size: .body, weight: .medium)
         label.lineBreakMode = .byTruncatingTail
         label.numberOfLines = 1
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -223,8 +222,7 @@ class DynamicHeightTableViewCell: UITableViewCell {
     
     private let subtitleLabel: UILabel = {
         let label = UILabel()
-//        label.font = .doingFont(size: .button, weight: .regular)
-        label.font = .boldSystemFont(ofSize: 15)
+        label.font = .doingFont(size: .button, weight: .regular)
         label.lineBreakMode = .byCharWrapping
         label.numberOfLines = 100
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -250,21 +248,16 @@ class DynamicHeightTableViewCell: UITableViewCell {
         ])
         
         constraints.append(contentsOf: [
-            titleLabel.topAnchor.constraint(equalTo: containerView.topAnchor,
-                                            constant: 5.0),
+            titleLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 5.0),
             titleLabel.heightAnchor.constraint(equalToConstant: 18.0),
-            titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor,
-                                                constant: 5),
+            titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 5),
             titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
         ])
         
         constraints.append(contentsOf: [
-            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor,
-                                               constant: 4.0),
-            subtitleLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor,
-                                                  constant: -4.0),
-            subtitleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor,
-                                                   constant: 5),
+            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4.0),
+            subtitleLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -4.0),
+            subtitleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 5),
             subtitleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
         ])
         

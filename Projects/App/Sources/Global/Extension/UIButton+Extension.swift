@@ -7,3 +7,23 @@
 //
 
 import Foundation
+
+import UIKit
+import Combine
+
+extension UIButton {
+    
+    var touchPublisher: AnyPublisher<Bool, Never> {
+        controlPublisher(for: .touchUpInside)
+            .map { button in
+                if button.tintColor == .mainOwner {
+                    button.tintColor = .disabledText
+                    return false
+                } else {
+                    button.tintColor = .mainOwner
+                    return true
+                }
+            }
+            .eraseToAnyPublisher()
+    }
+}

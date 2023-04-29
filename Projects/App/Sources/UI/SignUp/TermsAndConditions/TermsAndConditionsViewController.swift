@@ -6,12 +6,11 @@
 //  Copyright © 2023 com.Ozik. All rights reserved.
 //
 
-import Foundation
-
 import UIKit
 import DesignSystem
 import Combine
 
+//TODO: - 하나라도 클릭되어 있을 때 확인하고 전체동의 누를 경우 전체동의 실행 안되는 에러
 class TermsAndConditionsViewController: UIViewController {
     
     private var cancellables = Set<AnyCancellable>()
@@ -21,16 +20,14 @@ class TermsAndConditionsViewController: UIViewController {
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.clipsToBounds = true
-//        scrollView.backgroundColor = .backgroundNeutral
-        scrollView.backgroundColor = .white
+        scrollView.backgroundColor = .backgroundNeutral
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
 
     private let allAgreeTermsView: UIView = { // 수정 예정
         let view = UIView()
-//        view.backgroundColor = .backgroundNeutral
-        view.backgroundColor = .white
+        view.backgroundColor = .backgroundNeutral
         view.layer.borderColor = UIColor.gray.cgColor // 수정 예정 및 테두리 둥글게 수정
         view.layer.borderWidth = 1
         view.layer.cornerRadius = 4
@@ -40,24 +37,18 @@ class TermsAndConditionsViewController: UIViewController {
 
     private let allAgreeCheckMarkButton: UIButton = {
         let button = UIButton()
-
         button.setImage(UIImage(systemName: "checkmark.square"), for: .normal)
-        button.tintColor = .gray
-//        button.tintColor = .disabledText
+        button.tintColor = .disabledText
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
 
     private let allAgreeLabel: UILabel = {
         let label = UILabel()
-
         label.text = "전체 약관 동의"
-//        label.font = .doingFont(size: .body, weight: .medium)
-        label.font = .boldSystemFont(ofSize: 15)
-//        label.tintColor = .black4
-        label.tintColor = .black
+        label.font = .doingFont(size: .body, weight: .medium)
+        label.tintColor = .black4
         label.translatesAutoresizingMaskIntoConstraints = false
-
         return label
     }()
 
@@ -72,104 +63,78 @@ class TermsAndConditionsViewController: UIViewController {
 
     private let firstTermsView: UIView = {
         let view = UIView()
-
         view.translatesAutoresizingMaskIntoConstraints = false
-
         return view
     }()
 
     private let secondTermsView: UIView = {
         let view = UIView()
-
         view.translatesAutoresizingMaskIntoConstraints = false
-
         return view
     }()
 
     private let thirdTermsView: UIView = {
         let view = UIView()
-
         view.translatesAutoresizingMaskIntoConstraints = false
-
         return view
     }()
-    // test
+    
     private let firstTermsCheckMarkButton: UIButton = {
         let button = UIButton()
-
         button.setImage(UIImage(systemName: "checkmark.square"), for: .normal)
-//        button.tintColor = .disabledText
-        button.tintColor = .gray
+        button.tintColor = .disabledText
         button.translatesAutoresizingMaskIntoConstraints = false
-        
         return button
     }()
 
     private let firstTermsLabel: UILabel = {
         let label = UILabel()
-
         label.font = .systemFont(ofSize: 15)
         label.text = "(필수) 개인정보 수집 및 이용 동의"
-//        label.font = .doingFont(size: .caption, weight: .medium)
-        label.font = .boldSystemFont(ofSize: 15)
-//        label.tintColor = .black4
-        label.tintColor = .black
+        label.font = .doingFont(size: .caption, weight: .medium)
+        label.tintColor = .black4
         label.translatesAutoresizingMaskIntoConstraints = false
-
         return label
     }()
 
     private let firstTermsChevronButton: UIButton = {
         let button = UIButton()
-
         button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
-//        button.tintColor = .black1
-        button.tintColor = .black
+        button.tintColor = .black1
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
 
     private let secondTermsCheckMarkButton: UIButton = {
         let button = UIButton()
-
         button.setImage(UIImage(systemName: "checkmark.square"), for: .normal)
-//        button.tintColor = .disabledText
-        button.tintColor = .gray
+        button.tintColor = .disabledText
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
 
     private let secondTermsLabel: UILabel = {
         let label = UILabel()
-
         label.font = .systemFont(ofSize: 15)
         label.text = "(필수) 만 14세 이상 이용"
-//        button.titleLa /bel?.font = .doingFont(size: .button, weight: .medium)
-//        label.font = .doingFont(size: .caption, weight: .medium)
-        label.font = .boldSystemFont(ofSize: 15)
-//        label.tintColor = .black4
-        label.tintColor = .black
+        label.font = .doingFont(size: .caption, weight: .medium)
+        label.tintColor = .black4
         label.translatesAutoresizingMaskIntoConstraints = false
-
         return label
     }()
 
     private let secondTermsChevronButton: UIButton = {
         let button = UIButton()
-
         button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
-//        button.tintColor = .black1
-        button.tintColor = .black
+        button.tintColor = .black1
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
 
     private let thirdTermsCheckMarkButton: UIButton = {
         let button = UIButton()
-
         button.setImage(UIImage(systemName: "checkmark.square"), for: .normal)
-//        button.tintColor = .disabledText
-        button.tintColor = .gray
+        button.tintColor = .disabledText
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -177,12 +142,9 @@ class TermsAndConditionsViewController: UIViewController {
     private let thirdTermsLabel: UILabel = {
         let label = UILabel()
         label.text = "(필수) '오직' 이용약관"
-//        label.font = .doingFont(size: .caption, weight: .medium)
-        label.font = .boldSystemFont(ofSize: 15)
-//        label.tintColor = .black4
-        label.tintColor = .black
+        label.font = .doingFont(size: .caption, weight: .medium)
+        label.tintColor = .black4
         label.translatesAutoresizingMaskIntoConstraints = false
-
         return label
     }()
 
@@ -192,10 +154,8 @@ class TermsAndConditionsViewController: UIViewController {
         button.setTitleColor(.white, for: .normal) // .disabletext로 수정해야함
         button.layer.cornerRadius = 4
         button.layer.masksToBounds = true
-//        button.titleLabel?.font = .doingFont(size: .button, weight: .bold)
-        button.titleLabel?.font = .boldSystemFont(ofSize: 15)
-//        button.backgroundColor = .disabledText // disable1으로 수정해야함
-        button.backgroundColor = .gray
+        button.titleLabel?.font = .doingFont(size: .button, weight: .bold)
+        button.backgroundColor = .disabledText // disable1으로 수정해야함
         button.isEnabled = false
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -203,18 +163,15 @@ class TermsAndConditionsViewController: UIViewController {
 
     private let thirdTermsChevronButton: UIButton = {
         let button = UIButton()
-
         button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
-//        button.tintColor = .black1
-        button.tintColor = .black
+        button.tintColor = .black1
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-//        view.backgroundColor = .backgroundNeutral
-        view.backgroundColor = .gray
+        view.backgroundColor = .backgroundNeutral
         configureUI()
         createLayout()
         bind(to: viewModel)
@@ -222,7 +179,6 @@ class TermsAndConditionsViewController: UIViewController {
     
     // MARK: - ViewModel 바인딩
     private func bind(to viewModel: TermsAndCondtionsViewModel) {
-        
         let input = TermsAndCondtionsViewModel.Input(
             firstAgree: firstTermsCheckMarkButton.touchPublisher.eraseToAnyPublisher(),
             secondAgree: secondTermsCheckMarkButton.touchPublisher.eraseToAnyPublisher(),
@@ -235,28 +191,30 @@ class TermsAndConditionsViewController: UIViewController {
         
         output.remainAgreeIsPressed
             .sink { [weak self] state in
-                self?.allAgreeCheckMarkButton.tintColor = state ? .blue : .gray
-                self?.nextButton.backgroundColor = state ? .blue : .gray
+                self?.allAgreeCheckMarkButton.tintColor = state ? .mainOwner : .disabledText
+                self?.nextButton.backgroundColor = state ? .mainOwner : .disabledText
+                self?.nextButton.isEnabled = state
             }
             .store(in: &cancellables)
         
         output.allAgreeIsPressed
             .sink { [weak self] state in
-                self?.firstTermsCheckMarkButton.tintColor = state ? .blue : .gray
-                self?.secondTermsCheckMarkButton.tintColor = state ? .blue : .gray
-                self?.thirdTermsCheckMarkButton.tintColor = state ? .blue : .gray
-                // TODO: -색 뿐만 아니라 isEnabled 설정 추가
-                self?.nextButton.backgroundColor = state ? .blue: .gray
+                self?.firstTermsCheckMarkButton.tintColor = state ? .mainOwner : .disabledText
+                self?.secondTermsCheckMarkButton.tintColor = state ? .mainOwner : .disabledText
+                self?.thirdTermsCheckMarkButton.tintColor = state ? .mainOwner : .disabledText
+                self?.nextButton.backgroundColor = state ? .mainOwner : .disabledText
+                self?.nextButton.isEnabled = state
             }
             .store(in: &cancellables)
         
         output.privacyAgreeButtonIsPressed
             .sink { [weak self] state in
-                self?.allAgreeCheckMarkButton.tintColor = state ? .blue : .gray
-                self?.firstTermsCheckMarkButton.tintColor = state ? .blue : .gray
-                self?.secondTermsCheckMarkButton.tintColor = state ? .blue : .gray
-                self?.thirdTermsCheckMarkButton.tintColor = state ? .blue : .gray
-                self?.nextButton.backgroundColor = state ? .blue: .gray
+                self?.allAgreeCheckMarkButton.tintColor = .mainOwner
+                self?.firstTermsCheckMarkButton.tintColor = .mainOwner
+                self?.secondTermsCheckMarkButton.tintColor = .mainOwner
+                self?.thirdTermsCheckMarkButton.tintColor = .mainOwner
+                self?.nextButton.backgroundColor = .mainOwner
+                self?.nextButton.isEnabled = true
             }
             .store(in: &cancellables)
     }
@@ -267,35 +225,47 @@ extension TermsAndConditionsViewController {
     private func configureUI() {
         view.addSubview(scrollView)
         scrollView.addSubviews(allAgreeTermsView, termsStackView, nextButton)
-        termsStackView.addArrangedSubViews(firstTermsView, secondTermsView, thirdTermsView)
+        termsStackView.addArrangedSubviews(firstTermsView, secondTermsView, thirdTermsView)
         
         allAgreeTermsView.addSubviews(allAgreeCheckMarkButton, allAgreeLabel)
 
         firstTermsView.addSubviews(firstTermsCheckMarkButton, firstTermsLabel, firstTermsChevronButton)
+        let firstTap = UITapGestureRecognizer(target: self, action: #selector(firstChevronButtonAction))
+        firstTermsLabel.isUserInteractionEnabled = true
+        firstTermsLabel.addGestureRecognizer(firstTap)
         firstTermsChevronButton.addTarget(self, action: #selector(firstChevronButtonAction), for: .touchUpInside)
 
         secondTermsView.addSubviews(secondTermsCheckMarkButton, secondTermsLabel, secondTermsChevronButton)
+        let secondTap = UITapGestureRecognizer(target: self, action: #selector(secondChevronButtonAction))
+        secondTermsLabel.isUserInteractionEnabled = true
+        secondTermsLabel.addGestureRecognizer(secondTap)
         secondTermsChevronButton.addTarget(self, action: #selector(secondChevronButtonAction), for: .touchUpInside)
         
         thirdTermsView.addSubviews(thirdTermsCheckMarkButton, thirdTermsLabel, thirdTermsChevronButton)
+        let thirdTap = UITapGestureRecognizer(target: self, action: #selector(thirdChevronButtonAction))
+        thirdTermsLabel.isUserInteractionEnabled = true
+        thirdTermsLabel.addGestureRecognizer(thirdTap)
         thirdTermsChevronButton.addTarget(self, action: #selector(thirdChevronButtonAction), for: .touchUpInside)
         
         nextButton.addTarget(self, action: #selector(nextButtonAction), for: .touchUpInside)
     }
     
     @objc func firstChevronButtonAction(sender: UIButton!) {
+        let privacyAgreeVC = PrivacyAgreeViewController()
         privacyAgreeVC.termNumber = 0
         privacyAgreeVC.modalPresentationStyle = .fullScreen
         self.present(privacyAgreeVC, animated: true, completion: nil)
     }
     
     @objc func secondChevronButtonAction(sender: UIButton!) {
+        let privacyAgreeVC = PrivacyAgreeViewController()
         privacyAgreeVC.termNumber = 1
         privacyAgreeVC.modalPresentationStyle = .fullScreen
         self.present(privacyAgreeVC, animated: true, completion: nil)
     }
     
     @objc func thirdChevronButtonAction(sender: UIButton!) {
+        let privacyAgreeVC = PrivacyAgreeViewController()
         privacyAgreeVC.termNumber = 2
         privacyAgreeVC.modalPresentationStyle = .fullScreen
         self.present(privacyAgreeVC, animated: true, completion: nil)

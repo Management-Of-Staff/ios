@@ -34,14 +34,14 @@ final class TermsAndCondtionsViewModel: ViewModelType {
             .eraseToAnyPublisher()
         
         let allAgreeIsPressed = input.allAgree
-            .map { all in
-                all == true
+            .map { state in
+                return state
             }
             .eraseToAnyPublisher()
         
         let privacyAgreeButtonIsPressed = input.privacyAgreeButton
-            .map { all in
-                all == true
+            .map { _ in
+                return true
             }
             .eraseToAnyPublisher()
         
