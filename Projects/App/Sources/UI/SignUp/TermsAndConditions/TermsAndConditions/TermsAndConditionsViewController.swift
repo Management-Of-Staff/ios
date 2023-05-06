@@ -23,7 +23,7 @@ class TermsAndConditionsViewController: UIViewController {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
-//
+
     private let allAgreeTermsView: UIView = {
         let view = UIView()
         view.backgroundColor = .backgroundNeutral
@@ -174,7 +174,6 @@ class TermsAndConditionsViewController: UIViewController {
         bind(to: viewModel)
     }
     
-    // MARK: - ViewModel 바인딩
     private func bind(to viewModel: TermsAndCondtionsViewModel) {
         let input = TermsAndCondtionsViewModel.Input(
             firstAgree: firstTermsCheckMarkButton.touchPublisher.eraseToAnyPublisher(),
@@ -321,7 +320,6 @@ extension TermsAndConditionsViewController {
             nextButton.heightAnchor.constraint(equalTo: scrollView.heightAnchor, multiplier: 52/812)
         ])
     }
-
 }
 
 protocol SecondViewControllerDelegate: AnyObject {

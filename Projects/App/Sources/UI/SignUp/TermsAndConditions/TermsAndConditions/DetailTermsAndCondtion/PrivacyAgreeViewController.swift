@@ -230,7 +230,6 @@ class DynamicHeightTableViewCell: UITableViewCell {
     private func staticConstraints() -> [NSLayoutConstraint] {
         var constraints = [NSLayoutConstraint]()
         
-        //Set the constraints of the containerView view to the contentView of the Cell
         constraints.append(contentsOf: [
             containerView.topAnchor.constraint(equalTo: contentView.topAnchor),
             containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
