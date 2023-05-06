@@ -10,12 +10,11 @@ import UIKit
 import DesignSystem
 import Combine
 
-//TODO: - 하나라도 클릭되어 있을 때 확인하고 전체동의 누를 경우 전체동의 실행 안되는 에러
 class TermsAndConditionsViewController: UIViewController {
     
+    var privacyAgreeVC = PrivacyAgreeViewController()
     private var cancellables = Set<AnyCancellable>()
     private let viewModel = TermsAndCondtionsViewModel()
-    let privacyAgreeVC = PrivacyAgreeViewController()
     
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -24,19 +23,17 @@ class TermsAndConditionsViewController: UIViewController {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
-
-    private let allAgreeTermsView: UIView = { // 수정 예정
+//
+    private let allAgreeTermsView: UIView = {
         let view = UIView()
         view.backgroundColor = .backgroundNeutral
-        view.layer.borderColor = UIColor.gray.cgColor // 수정 예정 및 테두리 둥글게 수정
-        view.layer.borderWidth = 1
-        view.layer.cornerRadius = 4
+        view.addShadow()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
 
-    private let allAgreeCheckMarkButton: UIButton = {
-        let button = UIButton()
+    private let allAgreeCheckMarkButton: ToggleButton = {
+        let button = ToggleButton()
         button.setImage(UIImage(systemName: "checkmark.square"), for: .normal)
         button.tintColor = .disabledText
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -79,8 +76,8 @@ class TermsAndConditionsViewController: UIViewController {
         return view
     }()
     
-    private let firstTermsCheckMarkButton: UIButton = {
-        let button = UIButton()
+    private let firstTermsCheckMarkButton: ToggleButton = {
+        let button = ToggleButton()
         button.setImage(UIImage(systemName: "checkmark.square"), for: .normal)
         button.tintColor = .disabledText
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -105,8 +102,8 @@ class TermsAndConditionsViewController: UIViewController {
         return button
     }()
 
-    private let secondTermsCheckMarkButton: UIButton = {
-        let button = UIButton()
+    private let secondTermsCheckMarkButton: ToggleButton = {
+        let button = ToggleButton()
         button.setImage(UIImage(systemName: "checkmark.square"), for: .normal)
         button.tintColor = .disabledText
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -131,8 +128,8 @@ class TermsAndConditionsViewController: UIViewController {
         return button
     }()
 
-    private let thirdTermsCheckMarkButton: UIButton = {
-        let button = UIButton()
+    private let thirdTermsCheckMarkButton: ToggleButton = {
+        let button = ToggleButton()
         button.setImage(UIImage(systemName: "checkmark.square"), for: .normal)
         button.tintColor = .disabledText
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -183,15 +180,14 @@ class TermsAndConditionsViewController: UIViewController {
             firstAgree: firstTermsCheckMarkButton.touchPublisher.eraseToAnyPublisher(),
             secondAgree: secondTermsCheckMarkButton.touchPublisher.eraseToAnyPublisher(),
             thirdAgree: thirdTermsCheckMarkButton.touchPublisher.eraseToAnyPublisher(),
-            allAgree: allAgreeCheckMarkButton.touchPublisher.eraseToAnyPublisher(),
-            privacyAgreeButton: privacyAgreeVC.allAgreeButton.touchPublisher.eraseToAnyPublisher()
+            allAgree: allAgreeCheckMarkButton.touchPublisher.eraseToAnyPublisher()
         )
         
         let output = viewModel.transform(input: input)
-        
+    
         output.remainAgreeIsPressed
             .sink { [weak self] state in
-                self?.allAgreeCheckMarkButton.tintColor = state ? .mainOwner : .disabledText
+                self?.allAgreeCheckMarkButton.isSelected = state
                 self?.nextButton.backgroundColor = state ? .mainOwner : .disabledText
                 self?.nextButton.isEnabled = state
             }
@@ -199,28 +195,45 @@ class TermsAndConditionsViewController: UIViewController {
         
         output.allAgreeIsPressed
             .sink { [weak self] state in
-                self?.firstTermsCheckMarkButton.tintColor = state ? .mainOwner : .disabledText
-                self?.secondTermsCheckMarkButton.tintColor = state ? .mainOwner : .disabledText
-                self?.thirdTermsCheckMarkButton.tintColor = state ? .mainOwner : .disabledText
+                self?.firstTermsCheckMarkButton.isSelected = state
+                self?.secondTermsCheckMarkButton.isSelected = state
+                self?.thirdTermsCheckMarkButton.isSelected = state
                 self?.nextButton.backgroundColor = state ? .mainOwner : .disabledText
                 self?.nextButton.isEnabled = state
-            }
-            .store(in: &cancellables)
-        
-        output.privacyAgreeButtonIsPressed
-            .sink { [weak self] state in
-                self?.allAgreeCheckMarkButton.tintColor = .mainOwner
-                self?.firstTermsCheckMarkButton.tintColor = .mainOwner
-                self?.secondTermsCheckMarkButton.tintColor = .mainOwner
-                self?.thirdTermsCheckMarkButton.tintColor = .mainOwner
-                self?.nextButton.backgroundColor = .mainOwner
-                self?.nextButton.isEnabled = true
             }
             .store(in: &cancellables)
     }
 }
 
 extension TermsAndConditionsViewController {
+    
+    @objc func firstChevronButtonAction(sender: UIButton!) {
+        privacyAgreeVC = PrivacyAgreeViewController()
+        privacyAgreeVC.delegate = self
+        privacyAgreeVC.termNumber = 0
+        privacyAgreeVC.modalPresentationStyle = .fullScreen
+        self.present(privacyAgreeVC, animated: true, completion: nil)
+    }
+    
+    @objc func secondChevronButtonAction(sender: UIButton!) {
+        privacyAgreeVC = PrivacyAgreeViewController()
+        privacyAgreeVC.delegate = self
+        privacyAgreeVC.termNumber = 1
+        privacyAgreeVC.modalPresentationStyle = .fullScreen
+        self.present(privacyAgreeVC, animated: true, completion: nil)
+    }
+    
+    @objc func thirdChevronButtonAction(sender: UIButton!) {
+        privacyAgreeVC = PrivacyAgreeViewController()
+        privacyAgreeVC.delegate = self
+        privacyAgreeVC.termNumber = 2
+        privacyAgreeVC.modalPresentationStyle = .fullScreen
+        self.present(privacyAgreeVC, animated: true, completion: nil)
+    }
+    
+    @objc func nextButtonAction(sender: UIButton!) {
+        print("다음 버튼이 눌렸습니다")
+    }
 
     private func configureUI() {
         view.addSubview(scrollView)
@@ -248,31 +261,6 @@ extension TermsAndConditionsViewController {
         thirdTermsChevronButton.addTarget(self, action: #selector(thirdChevronButtonAction), for: .touchUpInside)
         
         nextButton.addTarget(self, action: #selector(nextButtonAction), for: .touchUpInside)
-    }
-    
-    @objc func firstChevronButtonAction(sender: UIButton!) {
-        let privacyAgreeVC = PrivacyAgreeViewController()
-        privacyAgreeVC.termNumber = 0
-        privacyAgreeVC.modalPresentationStyle = .fullScreen
-        self.present(privacyAgreeVC, animated: true, completion: nil)
-    }
-    
-    @objc func secondChevronButtonAction(sender: UIButton!) {
-        let privacyAgreeVC = PrivacyAgreeViewController()
-        privacyAgreeVC.termNumber = 1
-        privacyAgreeVC.modalPresentationStyle = .fullScreen
-        self.present(privacyAgreeVC, animated: true, completion: nil)
-    }
-    
-    @objc func thirdChevronButtonAction(sender: UIButton!) {
-        let privacyAgreeVC = PrivacyAgreeViewController()
-        privacyAgreeVC.termNumber = 2
-        privacyAgreeVC.modalPresentationStyle = .fullScreen
-        self.present(privacyAgreeVC, animated: true, completion: nil)
-    }
-    
-    @objc func nextButtonAction(sender: UIButton!) {
-        print("다음 버튼이 눌렸습니다")
     }
     
     private func createLayout() {
@@ -334,4 +322,20 @@ extension TermsAndConditionsViewController {
         ])
     }
 
+}
+
+protocol SecondViewControllerDelegate: AnyObject {
+    func dismissSecondViewController()
+}
+
+extension TermsAndConditionsViewController: SecondViewControllerDelegate {
+    func dismissSecondViewController() {
+        print("호출됨")
+        firstTermsCheckMarkButton.isSelected = true
+        secondTermsCheckMarkButton.isSelected = true
+        allAgreeCheckMarkButton.isSelected = true
+        thirdTermsCheckMarkButton.isSelected = true
+        nextButton.backgroundColor = .mainOwner
+        nextButton.isEnabled = true
+    }
 }

@@ -12,18 +12,20 @@ import UIKit
 import Combine
 
 extension UIButton {
-    
     var touchPublisher: AnyPublisher<Bool, Never> {
         controlPublisher(for: .touchUpInside)
-            .map { button in
-                if button.tintColor == .mainOwner {
-                    button.tintColor = .disabledText
-                    return false
-                } else {
-                    button.tintColor = .mainOwner
-                    return true
-                }
+            .compactMap { button in
+                button.isSelected.toggle()
+                return button.isSelected
             }
             .eraseToAnyPublisher()
     }
+}
+
+class ToggleButton: UIButton { // 폴더 이동 필요
+     override open var isSelected: Bool {
+         didSet {
+             tintColor = isSelected ? .mainOwner : .disabledText
+         }
+     }
 }

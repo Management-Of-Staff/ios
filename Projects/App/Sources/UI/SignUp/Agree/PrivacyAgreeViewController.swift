@@ -11,15 +11,7 @@ import UIKit
 class PrivacyAgreeViewController: UIViewController {
 
     var termNumber: Int?
-    
-    init(termNumber: Int? = nil) {
-        self.termNumber = termNumber
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    weak var delegate: SecondViewControllerDelegate?
     
     private let termsTitle: UILabel = {
         let label = UILabel()
@@ -52,7 +44,7 @@ class PrivacyAgreeViewController: UIViewController {
         return view
     }()
     
-    let allAgreeButton: UIButton = {
+    private let allAgreeButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .blue
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -73,23 +65,24 @@ class PrivacyAgreeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("현재 페이지: \(termNumber)")
         view.backgroundColor = .backgroundNeutral
         configureUI()
         createLayout()
     }
+}
+
+extension PrivacyAgreeViewController {
     
     @objc func dismissButtonAction(sender: UIButton!) {
         print("닫기 버튼 눌림")
         dismiss(animated: true, completion: nil)
     }
+    
     @objc func allAgreeAction(sender: UIButton!) {
+        delegate?.dismissSecondViewController()
         print("확인하고 전체동의 눌림")
         dismiss(animated: true, completion: nil)
     }
-}
-
-extension PrivacyAgreeViewController {
     
     private func configureUI() {
         view.addSubview(privacyAgreeDetailView)
@@ -192,7 +185,6 @@ class DynamicHeightTableViewCell: UITableViewCell {
         return String(describing: self)
     }
     
-    // MARK: Overrides
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         commonInit()
@@ -230,7 +222,6 @@ class DynamicHeightTableViewCell: UITableViewCell {
     }()
     
     private let containerView: UIView = {
-        // wrapper to contain all the subviews for the UITableViewCell
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -264,10 +255,8 @@ class DynamicHeightTableViewCell: UITableViewCell {
         return constraints
     }
     
-    // function to configure the cells title and subtitle Text
     func configureCell(with title: String, subtitle: String, image: UIImage? = nil) {
         titleLabel.text = title
         subtitleLabel.text = subtitle
     }
 }
-
