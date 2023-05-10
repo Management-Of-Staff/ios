@@ -24,7 +24,7 @@ final class StaffTabViewController: UITabBarController {
         let homeVC = StaffHomeViewController()
         let shopVC = StaffShopViewController()
         let paidVC = StaffPaidViewControlller()
-        let hireVC = HireViewController()
+        let hireVC = StaffHireViewController()
         let myInfoVC = StaffMyInfoViewController()
         
         let nav1 = UINavigationController(rootViewController: homeVC)

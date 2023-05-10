@@ -1,14 +1,14 @@
 //
-//  StaffShopViewModel.swift
+//  OwnerPaidViewModel.swift
 //  App
 //
-//  Created by Taehwan Kim on 2023/04/13.
+//  Created by Taehwan Kim on 2023/05/10.
 //  Copyright (c) 2023 com.Ozik. All rights reserved.
 //
 
 import Combine
 
-final class StaffShopViewModel {
+final class OwnerPaidViewModel {
     
     // MARK: - Properties
     private var cancelBag = Set<AnyCancellable>()

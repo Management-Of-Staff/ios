@@ -8,7 +8,7 @@
 
 import Combine
 
-final class SignUpOwnerViewModel: ViewModelType {
+final class SignUpOwnerViewModel {
     
     // MARK: - Properties
     private var cancelBag = Set<AnyCancellable>()

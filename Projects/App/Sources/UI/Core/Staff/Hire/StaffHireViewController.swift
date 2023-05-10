@@ -9,7 +9,7 @@
 import UIKit
 import DesignSystem
 
-final class HireViewController: UIViewController {
+final class StaffHireViewController: UIViewController {
     // 여긴 솔직히 사장만 가는 페이지 아닌가..?
     override func viewDidLoad() {
         super.viewDidLoad()
